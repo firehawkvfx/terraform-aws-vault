@@ -42,10 +42,20 @@ variable "ssh_key_name" {
   default     = null
 }
 
+variable "aws_subnet_ids" {
+  description = "The list of subnet ID's to build resources in"
+  type        = list(string)
+}
+
 variable "subnet_tags" {
   description = "Tags used to find subnets for vault and consul servers"
   type        = map(string)
   default     = {}
+}
+
+variable "vpc_id" {
+  description = "The VPC ID to build resources in"
+  type        = string
 }
 
 variable "vpc_tags" {

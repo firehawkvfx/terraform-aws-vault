@@ -66,8 +66,8 @@ module "vault_cluster" {
   ami_id    = var.ami_id == null ? data.aws_ami.vault_consul.image_id : var.ami_id
   user_data = data.template_file.user_data_vault_cluster.rendered
 
-  vpc_id     = data.aws_vpc.default.id
-  subnet_ids = data.aws_subnet_ids.default.ids
+  vpc_id     = var.vpc_id
+  subnet_ids = var.aws_subnet_ids
 
   # Do NOT use the ELB for the ASG health check, or the ASG will assume all sealed instances are unhealthy and
   # repeatedly try to redeploy them.
@@ -139,8 +139,8 @@ module "vault_elb" {
 
   name = var.vault_cluster_name
 
-  vpc_id     = data.aws_vpc.default.id
-  subnet_ids = data.aws_subnet_ids.default.ids
+  vpc_id     = var.vpc_id
+  subnet_ids = var.aws_subnet_ids
 
   # Associate the ELB with the instances created by the Vault Autoscaling group
   vault_asg_name = module.vault_cluster.asg_name
@@ -183,8 +183,8 @@ module "consul_cluster" {
   ami_id    = var.ami_id == null ? data.aws_ami.vault_consul.image_id : var.ami_id
   user_data = data.template_file.user_data_consul.rendered
 
-  vpc_id     = data.aws_vpc.default.id
-  subnet_ids = data.aws_subnet_ids.default.ids
+  vpc_id     = var.vpc_id
+  subnet_ids = var.aws_subnet_ids
 
   # To make testing easier, we allow Consul and SSH requests from any IP address here but in a production
   # deployment, we strongly recommend you limit this to the IP address ranges of known, trusted servers inside your VPC.
@@ -215,15 +215,15 @@ data "template_file" "user_data_consul" {
 # and private subnets. Only the ELB should run in the public subnets.
 # ---------------------------------------------------------------------------------------------------------------------
 
-data "aws_vpc" "default" {
-  default = var.use_default_vpc
-  tags    = var.vpc_tags
-}
+# data "aws_vpc" "default" {
+#   default = var.use_default_vpc
+#   tags    = var.vpc_tags
+# }
 
-data "aws_subnet_ids" "default" {
-  vpc_id = data.aws_vpc.default.id
-  tags   = var.subnet_tags
-}
+# data "aws_subnet_ids" "default" {
+#   vpc_id = data.aws_vpc.default.id
+#   tags   = var.subnet_tags
+# }
 
 data "aws_region" "current" {
 }
