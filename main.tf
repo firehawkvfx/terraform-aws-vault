@@ -52,6 +52,14 @@ data "aws_ami" "vault_consul" {
 # ---------------------------------------------------------------------------------------------------------------------
 # DEPLOY THE VAULT SERVER CLUSTER
 # ---------------------------------------------------------------------------------------------------------------------
+resource "aws_kms_key" "vault" {
+  description             = "Vault unseal key"
+  deletion_window_in_days = 10
+
+  tags = {
+    Name = "vault-kms-unseal-${random_pet.env.id}"
+  }
+}
 
 module "vault_cluster" {
   # When using these modules in your own templates, you will need to use a Git URL with a ref attribute that pins you
@@ -81,6 +89,7 @@ module "vault_cluster" {
   allowed_inbound_security_group_ids   = []
   allowed_inbound_security_group_count = 0
   ssh_key_name                         = var.ssh_key_name
+  auto_unseal_kms_key_arn = aws_kms_key.vault.key_id
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
