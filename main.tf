@@ -49,6 +49,10 @@ data "aws_ami" "vault_consul" {
   }
 }
 
+resource "random_pet" "env" {
+  length = 2
+}
+
 # ---------------------------------------------------------------------------------------------------------------------
 # DEPLOY THE VAULT SERVER CLUSTER
 # ---------------------------------------------------------------------------------------------------------------------
@@ -89,7 +93,8 @@ module "vault_cluster" {
   allowed_inbound_security_group_ids   = []
   allowed_inbound_security_group_count = 0
   ssh_key_name                         = var.ssh_key_name
-  auto_unseal_kms_key_arn = aws_kms_key.vault.key_id
+  enable_auto_unseal = true
+  auto_unseal_kms_key_arn = aws_kms_key.vault.arn
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
