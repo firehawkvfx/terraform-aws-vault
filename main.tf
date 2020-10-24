@@ -85,6 +85,12 @@ module "vault_cluster" {
   # repeatedly try to redeploy them.
   health_check_type = "EC2"
 
+  # This setting will create the AWS policy that allows the vault cluster to
+  # access KMS and use this key for encryption and decryption
+  enable_auto_unseal = true
+
+  auto_unseal_kms_key_arn = aws_kms_key.vault.arn
+
   # To make testing easier, we allow requests from any IP address here but in a production deployment, we *strongly*
   # recommend you limit this to the IP address ranges of known, trusted servers inside your VPC.
 
@@ -93,8 +99,6 @@ module "vault_cluster" {
   allowed_inbound_security_group_ids   = []
   allowed_inbound_security_group_count = 0
   ssh_key_name                         = var.ssh_key_name
-  enable_auto_unseal = true
-  auto_unseal_kms_key_arn = aws_kms_key.vault.arn
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -114,13 +118,24 @@ module "consul_iam_policies_servers" {
 # This script will configure and start Vault
 # ---------------------------------------------------------------------------------------------------------------------
 
+# data "template_file" "user_data_vault_cluster" {
+#   template = file("${path.module}/examples/root-example/user-data-vault.sh")
+
+#   vars = {
+#     aws_region               = data.aws_region.current.name
+#     consul_cluster_tag_key   = var.consul_cluster_tag_key
+#     consul_cluster_tag_value = var.consul_cluster_name
+#   }
+# }
+
 data "template_file" "user_data_vault_cluster" {
-  template = file("${path.module}/examples/root-example/user-data-vault.sh")
+  template = file("${path.module}/examples/vault-auto-unseal/user-data-vault.sh")
 
   vars = {
-    aws_region               = data.aws_region.current.name
     consul_cluster_tag_key   = var.consul_cluster_tag_key
     consul_cluster_tag_value = var.consul_cluster_name
+    kms_key_id               = data.aws_kms_alias.vault-example.target_key_id
+    aws_region               = data.aws_region.current.name
   }
 }
 
