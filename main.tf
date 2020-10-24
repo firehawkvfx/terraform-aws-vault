@@ -134,7 +134,7 @@ data "template_file" "user_data_vault_cluster" {
   vars = {
     consul_cluster_tag_key   = var.consul_cluster_tag_key
     consul_cluster_tag_value = var.consul_cluster_name
-    kms_key_id               = data.aws_kms_alias.vault-example.target_key_id
+    kms_key_id               = aws_kms_key.vault.id
     aws_region               = data.aws_region.current.name
   }
 }
