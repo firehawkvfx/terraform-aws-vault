@@ -14,7 +14,7 @@
   },
   "builders": [{
     "ami_name": "vault-consul-ubuntu18-{{isotime | clean_resource_name}}-{{uuid}}",
-    "ami_description": "An Ubuntu 18.04 AMI that has Vault and Consul installed.",
+    "ami_description": "An Ubuntu 18.04 AMI that has Vault {{user `vault_version`}} and Consul {{user `consul_version`}} installed.",
     "instance_type": "t2.micro",
     "name": "ubuntu18-ami",
     "region": "{{user `aws_region`}}",
@@ -33,7 +33,7 @@
     "ssh_username": "ubuntu"
   },{
     "ami_name": "vault-consul-ubuntu16-{{isotime | clean_resource_name}}-{{uuid}}",
-    "ami_description": "An Ubuntu 16.04 AMI that has Vault and Consul installed.",
+    "ami_description": "An Ubuntu 16.04 AMI that has Vault {{user `vault_version`}} and Consul {{user `consul_version`}} installed.",
     "instance_type": "t2.micro",
     "name": "ubuntu16-ami",
     "region": "{{user `aws_region`}}",
@@ -52,7 +52,7 @@
     "ssh_username": "ubuntu"
   },{
     "ami_name": "vault-consul-amazon-linux-2-{{isotime | clean_resource_name}}-{{uuid}}",
-    "ami_description": "An Amazon Linux 2 AMI that has Vault and Consul installed.",
+    "ami_description": "An Amazon Linux 2 AMI that has Vault {{user `vault_version`}} and Consul {{user `consul_version`}} installed.",
     "instance_type": "t2.micro",
     "name": "amazon-linux-2-ami",
     "region": "{{user `aws_region`}}",
