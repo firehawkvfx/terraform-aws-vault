@@ -36,6 +36,12 @@ variable "ami_id" {
   default     = null
 }
 
+variable "enable_auto_unseal" {
+  description = "If enabled, will generate and use a KMS key to auto unseal the vault.  WARNING: continuously destroying and creating a KMS key will cost 1$ each time"
+  type        = string
+  default     = false
+}
+
 variable "ssh_key_name" {
   description = "The name of an EC2 Key Pair that can be used to SSH to the EC2 Instances in this cluster. Set to an empty string to not associate a Key Pair."
   type        = string

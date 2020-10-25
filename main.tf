@@ -57,6 +57,7 @@ resource "random_pet" "env" {
 # DEPLOY THE VAULT SERVER CLUSTER
 # ---------------------------------------------------------------------------------------------------------------------
 resource "aws_kms_key" "vault" {
+  count = var.enable_auto_unseal ? 1 : 0
   description             = "Vault unseal key"
   deletion_window_in_days = 10
 
@@ -87,9 +88,9 @@ module "vault_cluster" {
 
   # This setting will create the AWS policy that allows the vault cluster to
   # access KMS and use this key for encryption and decryption
-  enable_auto_unseal = false
+  enable_auto_unseal = var.enable_auto_unseal
 
-  # auto_unseal_kms_key_arn = aws_kms_key.vault.arn
+  auto_unseal_kms_key_arn = var.enable_auto_unseal ? aws_kms_key.vault.arn : ""
 
   # To make testing easier, we allow requests from any IP address here but in a production deployment, we *strongly*
   # recommend you limit this to the IP address ranges of known, trusted servers inside your VPC.
@@ -118,15 +119,15 @@ module "consul_iam_policies_servers" {
 # This script will configure and start Vault
 # ---------------------------------------------------------------------------------------------------------------------
 
-data "template_file" "user_data_vault_cluster" {
-  template = file("${path.module}/examples/root-example/user-data-vault.sh")
+# data "template_file" "user_data_vault_cluster" {
+#   template = file("${path.module}/examples/root-example/user-data-vault.sh")
 
-  vars = {
-    aws_region               = data.aws_region.current.name
-    consul_cluster_tag_key   = var.consul_cluster_tag_key
-    consul_cluster_tag_value = var.consul_cluster_name
-  }
-}
+#   vars = {
+#     aws_region               = data.aws_region.current.name
+#     consul_cluster_tag_key   = var.consul_cluster_tag_key
+#     consul_cluster_tag_value = var.consul_cluster_name
+#   }
+# }
 
 # data "template_file" "user_data_vault_cluster" {
 #   template = file("${path.module}/examples/vault-auto-unseal/user-data-vault.sh")
@@ -138,6 +139,23 @@ data "template_file" "user_data_vault_cluster" {
 #     aws_region               = data.aws_region.current.name
 #   }
 # }
+
+data "template_file" "user_data_vault_cluster" {
+  template = var.enable_auto_unseal ? file("${path.module}/examples/vault-auto-unseal/user-data-vault.sh") : file("${path.module}/examples/root-example/user-data-vault.sh")
+
+  vars = var.enable_auto_unseal ? { # provide different vars when unsealing
+    consul_cluster_tag_key   = var.consul_cluster_tag_key
+    consul_cluster_tag_value = var.consul_cluster_name
+    kms_key_id               = aws_kms_key.vault.id
+    aws_region               = data.aws_region.current.name
+  } : {
+    aws_region               = data.aws_region.current.name
+    consul_cluster_tag_key   = var.consul_cluster_tag_key
+    consul_cluster_tag_value = var.consul_cluster_name
+  }
+}
+
+
 
 # ---------------------------------------------------------------------------------------------------------------------
 # PERMIT CONSUL SPECIFIC TRAFFIC IN VAULT CLUSTER
