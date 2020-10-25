@@ -6,19 +6,19 @@
 variable "ca_public_key_file_path" {
   description = "Write the PEM-encoded CA certificate public key to this path (e.g. /etc/tls/ca.crt.pem)."
   type        = string
-  default     = " ~/.ssh/tls/ca.crt.pem"
+  default     = "/home/ec2-user/.ssh/tls/ca.crt.pem"
 }
 
 variable "public_key_file_path" {
   description = "Write the PEM-encoded certificate public key to this path (e.g. /etc/tls/vault.crt.pem)."
   type        = string
-  default     = "~/.ssh/tls/vault.crt.pem"
+  default     = "/home/ec2-user/.ssh/tls/vault.crt.pem"
 }
 
 variable "private_key_file_path" {
   description = "Write the PEM-encoded certificate private key to this path (e.g. /etc/tls/vault.key.pem)."
   type        = string
-  default     = "~/.ssh/tls/vault.key.pem"
+  default     = "/home/ec2-user/.ssh/tls/vault.key.pem"
 }
 
 variable "owner" {
