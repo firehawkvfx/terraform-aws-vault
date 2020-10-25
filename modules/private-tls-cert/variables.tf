@@ -6,21 +6,25 @@
 variable "ca_public_key_file_path" {
   description = "Write the PEM-encoded CA certificate public key to this path (e.g. /etc/tls/ca.crt.pem)."
   type        = string
+  default     = "/etc/tls/ca.crt.pem"
 }
 
 variable "public_key_file_path" {
   description = "Write the PEM-encoded certificate public key to this path (e.g. /etc/tls/vault.crt.pem)."
   type        = string
+  default     = "/etc/tls/vault.crt.pem"
 }
 
 variable "private_key_file_path" {
   description = "Write the PEM-encoded certificate private key to this path (e.g. /etc/tls/vault.key.pem)."
   type        = string
+  default     = "/etc/tls/vault.key.pem"
 }
 
 variable "owner" {
   description = "The OS user who should be given ownership over the certificate files."
   type        = string
+  default     = "ec2-user"
 }
 
 variable "organization_name" {
@@ -31,21 +35,25 @@ variable "organization_name" {
 variable "ca_common_name" {
   description = "The common name to use in the subject of the CA certificate (e.g. acme.co cert)."
   type        = string
+  default     = "Firehawk CA Cert"
 }
 
 variable "common_name" {
   description = "The common name to use in the subject of the certificate (e.g. acme.co cert)."
   type        = string
+  default     = "Firehawk Cert"
 }
 
 variable "dns_names" {
   description = "List of DNS names for which the certificate will be valid (e.g. vault.service.consul, foo.example.com)."
   type        = list(string)
+  default     = ["vault.service.consul"]
 }
 
 variable "ip_addresses" {
   description = "List of IP addresses for which the certificate will be valid (e.g. 127.0.0.1)."
   type        = list(string)
+  default     = ["127.0.0.1"]
 }
 
 variable "validity_period_hours" {
