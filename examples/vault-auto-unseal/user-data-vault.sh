@@ -19,6 +19,9 @@ readonly VAULT_TLS_KEY_FILE="/opt/vault/tls/vault.key.pem"
 /opt/vault/bin/run-vault \
   --tls-cert-file "$VAULT_TLS_CERT_FILE" \
   --tls-key-file "$VAULT_TLS_KEY_FILE" \
+  --enable-s3-backend \
+  --s3-bucket "${s3_bucket_name}" \
+  --s3-bucket-region "${aws_region}" \
   --enable-auto-unseal \
   --auto-unseal-kms-key-id "${kms_key_id}" \
   --auto-unseal-kms-key-region "${aws_region}"
