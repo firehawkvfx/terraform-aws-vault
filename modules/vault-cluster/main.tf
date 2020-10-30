@@ -52,7 +52,7 @@ resource "aws_autoscaling_group" "autoscaling_group" {
 
   tag {
     key                 = "s3_bucket_id"
-    value               = element(concat(aws_s3_bucket.vault_storage.*.id, [""]), 0)
+    value               = element(concat(data.aws_s3_bucket.vault_storage.*.id, [""]), 0)
     propagate_at_launch = true
   }
 
@@ -254,29 +254,37 @@ data "aws_iam_policy_document" "instance_role" {
   }
 }
 
-resource "aws_s3_bucket" "vault_storage" {
+data "aws_s3_bucket" "vault_storage" {
   count         = var.enable_s3_backend ? 1 : 0
   bucket        = var.s3_bucket_name
-  force_destroy = var.force_destroy_s3_bucket
-
-  tags = merge(
-    {
-      "Description" = "Used for secret storage with Vault. DO NOT DELETE this Bucket unless you know what you are doing."
-    },
-    var.s3_bucket_tags,
-  )
-
-  versioning {
-    enabled = var.enable_s3_bucket_versioning
-  }
-
-  # aws_launch_configuration.launch_configuration in this module sets create_before_destroy to true, which means
-  # everything it depends on, including this resource, must set it as well, or you'll get cyclic dependency errors
-  # when you try to do a terraform destroy.
-  lifecycle {
-    create_before_destroy = true
-  }
 }
+
+# resource "aws_s3_bucket" "vault_storage" {
+#   count         = var.enable_s3_backend ? 1 : 0
+#   bucket        = var.s3_bucket_name
+#   force_destroy = var.force_destroy_s3_bucket
+
+#   tags = merge(
+#     {
+#       "Description" = "Used for secret storage with Vault. DO NOT DELETE this Bucket unless you know what you are doing."
+#     },
+#     var.s3_bucket_tags,
+#   )
+
+#   versioning {
+#     enabled = var.enable_s3_bucket_versioning
+#   }
+
+#   # aws_launch_configuration.launch_configuration in this module sets create_before_destroy to true, which means
+#   # everything it depends on, including this resource, must set it as well, or you'll get cyclic dependency errors
+#   # when you try to do a terraform destroy.
+#   lifecycle {
+#     create_before_destroy = true
+#   }
+# }
+
+
+
 
 resource "aws_iam_role_policy" "vault_s3" {
   count = var.enable_s3_backend ? 1 : 0
@@ -303,8 +311,8 @@ data "aws_iam_policy_document" "vault_s3" {
     actions = ["s3:*"]
 
     resources = [
-      aws_s3_bucket.vault_storage[0].arn,
-      "${aws_s3_bucket.vault_storage[0].arn}/*",
+      data.aws_s3_bucket.vault_storage[0].arn,
+      "${data.aws_s3_bucket.vault_storage[0].arn}/*",
     ]
   }
 }
