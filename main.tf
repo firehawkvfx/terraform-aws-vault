@@ -89,8 +89,10 @@ module "vault_cluster" {
   # This setting will create the AWS policy that allows the vault cluster to
   # access KMS and use this key for encryption and decryption
   enable_auto_unseal = var.enable_auto_unseal
-
   auto_unseal_kms_key_arn = var.enable_auto_unseal ? element( concat( aws_kms_key.vault.*.arn, list("")), 0 ) : ""
+
+  enable_s3_backend = var.enable_s3_backend
+  s3_bucket_name = var.s3_bucket_name
 
   # To make testing easier, we allow requests from any IP address here but in a production deployment, we *strongly*
   # recommend you limit this to the IP address ranges of known, trusted servers inside your VPC.

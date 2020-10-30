@@ -48,6 +48,18 @@ variable "ssh_key_name" {
   default     = null
 }
 
+variable "enable_s3_backend" {
+  description = "The name of an EC2 Key Pair that can be used to SSH to the EC2 Instances in this cluster. Set to an empty string to not associate a Key Pair."
+  type        = bool
+  default     = false
+}
+
+variable "s3_bucket_name" {
+  description = "The name of the S3 Bucket to persist Vault data when all nodes are shutdown."
+  type        = string
+  default     = null
+}
+
 variable "subnet_tags" {
   description = "Tags used to find subnets for vault and consul servers"
   type        = map(string)
