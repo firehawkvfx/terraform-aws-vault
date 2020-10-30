@@ -150,6 +150,7 @@ data "template_file" "user_data_vault_cluster" {
     consul_cluster_tag_value = var.consul_cluster_name
     kms_key_id               = element( concat( aws_kms_key.vault.*.id, list("")), 0 )
     aws_region               = data.aws_region.current.name
+    s3_bucket_name           = var.s3_bucket_name
   } : {
     aws_region               = data.aws_region.current.name
     consul_cluster_tag_key   = var.consul_cluster_tag_key
