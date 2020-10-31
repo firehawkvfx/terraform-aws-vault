@@ -142,7 +142,7 @@
     "type": "shell",
     "inline": [
       "sudo yum update -y",
-      "sleep 20",
+      "sleep 5",
       "sudo yum install -y git",
       "sudo yum install -y python python3.7 python3-pip",
       "python3 -m pip install --user --upgrade pip",
