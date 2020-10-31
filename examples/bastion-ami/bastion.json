@@ -125,8 +125,7 @@
       "sudo apt-get install -y -q",
       "sudo apt-get -y update",
       "sudo apt-get install -y git",
-      "sudo apt-get -y install python3",
-      "sudo apt-get -y install python-apt",
+      "sudo apt-get -y install python3.7",
       "sudo apt-get install -y python3-pip",
       "pip3 install --upgrade pip",
       "pip3 install --user boto3"
@@ -138,7 +137,7 @@
     "inline": [
       "sudo yum update -y",
       "sudo yum install -y git",
-      "sudo yum install -y python python3 python3-pip",
+      "sudo yum install -y python python3.7 python3-pip",
       "pip3 install --upgrade pip",
       "pip3 install --user boto3"
     ],
