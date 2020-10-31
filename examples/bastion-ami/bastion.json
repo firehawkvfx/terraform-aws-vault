@@ -124,14 +124,20 @@
       "echo 'debconf debconf/frontend select Noninteractive' | sudo debconf-set-selections",
       "sudo apt-get install -y -q",
       "sudo apt-get -y update",
-      "sudo apt-get install -y git",
+      "sudo apt-get install -y git"
+    ],
+    "inline_shebang": "/bin/bash -e",
+    "only": ["ubuntu16-ami","ubuntu18-ami"]
+  },{
+    "type": "shell",
+    "inline": [
       "sudo apt-get -y install python3.7",
       "sudo apt-get install -y python3-pip",
       "pip3 install --upgrade pip",
       "pip3 install --user boto3"
     ],
     "inline_shebang": "/bin/bash -e",
-    "only": ["ubuntu16-ami","ubuntu18-ami"]
+    "only": ["ubuntu18-ami"]
   },{
     "type": "shell",
     "inline": [
