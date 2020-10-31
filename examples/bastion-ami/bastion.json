@@ -141,10 +141,8 @@
   },{
     "type": "shell",
     "inline": [
-      "numProcess=` ps -ef | grep 'yum' | grep -v 'grep' | wc`",
-      "while [[ numProcess -gt 0 ]]; do; sleep 5; done",
       "sudo yum update -y",
-      "while [[ numProcess -gt 0 ]]; do; sleep 5; done",
+      "sleep 20",
       "sudo yum install -y git",
       "sudo yum install -y python python3.7 python3-pip",
       "python3 -m pip install --user --upgrade pip",
