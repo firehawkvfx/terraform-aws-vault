@@ -5,16 +5,12 @@
     "vault_version": "1.5.5",
     "consul_module_version": "v0.8.0",
     "consul_version": "1.8.4",
-    "consul_download_url": "{{env `CONSUL_DOWNLOAD_URL`}}",
-    "vault_download_url": "{{env `VAULT_DOWNLOAD_URL`}}",
     "install_auth_signing_script": "true",
-    "ca_public_key_path": "/home/ec2-user/.ssh/tls/ca.crt.pem",
-    "tls_public_key_path": "/home/ec2-user/.ssh/tls/vault.crt.pem",
-    "tls_private_key_path": "/home/ec2-user/.ssh/tls/vault.key.pem"
+    "ca_public_key_path": "/home/ec2-user/.ssh/tls/ca.crt.pem"
   },
   "builders": [{
     "ami_name": "vault-consul-ubuntu18-{{isotime | clean_resource_name}}-{{uuid}}",
-    "ami_description": "An Ubuntu 18.04 AMI that has Vault {{user `vault_version`}} and Consul {{user `consul_version`}} installed.",
+    "ami_description": "An Ubuntu 18.04 AMI that will accept connections from hosts with TLS Certs.",
     "instance_type": "t2.micro",
     "name": "ubuntu18-ami",
     "region": "{{user `aws_region`}}",
@@ -33,7 +29,7 @@
     "ssh_username": "ubuntu"
   },{
     "ami_name": "vault-consul-ubuntu16-{{isotime | clean_resource_name}}-{{uuid}}",
-    "ami_description": "An Ubuntu 16.04 AMI that has Vault {{user `vault_version`}} and Consul {{user `consul_version`}} installed.",
+    "ami_description": "An Ubuntu 16.04 AMI that will accept connections from hosts with TLS Certs.",
     "instance_type": "t2.micro",
     "name": "ubuntu16-ami",
     "region": "{{user `aws_region`}}",
@@ -52,7 +48,7 @@
     "ssh_username": "ubuntu"
   },{
     "ami_name": "vault-consul-amazon-linux-2-{{isotime | clean_resource_name}}-{{uuid}}",
-    "ami_description": "An Amazon Linux 2 AMI that has Vault {{user `vault_version`}} and Consul {{user `consul_version`}} installed.",
+    "ami_description": "An Amazon Linux 2 AMI that will accept connections from hosts with TLS Certs.",
     "instance_type": "t2.micro",
     "name": "amazon-linux-2-ami",
     "region": "{{user `aws_region`}}",
@@ -79,15 +75,6 @@
     "destination": "/tmp/terraform-aws-vault/modules",
     "pause_before": "30s"
   },{
-    "type": "shell",
-    "inline": [
-      "if test -n \"{{user `vault_download_url`}}\"; then",
-      " /tmp/terraform-aws-vault/modules/install-vault/install-vault --download-url {{user `vault_download_url`}};",
-      "else",
-      " /tmp/terraform-aws-vault/modules/install-vault/install-vault --version {{user `vault_version`}};",
-      "fi"
-    ]
-  },{
     "type": "file",
     "source": "{{template_dir}}/auth/sign-request.py",
     "destination": "/tmp/sign-request.py"
@@ -95,14 +82,6 @@
     "type": "file",
     "source": "{{user `ca_public_key_path`}}",
     "destination": "/tmp/ca.crt.pem"
-  },{
-    "type": "file",
-    "source": "{{user `tls_public_key_path`}}",
-    "destination": "/tmp/vault.crt.pem"
-  },{
-    "type": "file",
-    "source": "{{user `tls_private_key_path`}}",
-    "destination": "/tmp/vault.key.pem"
 },{
     "type": "shell",
     "inline": [
@@ -112,8 +91,6 @@
       "sudo rm /tmp/sign-request.py",
       "fi",
       "sudo mv /tmp/ca.crt.pem /opt/vault/tls/",
-      "sudo mv /tmp/vault.crt.pem /opt/vault/tls/",
-      "sudo mv /tmp/vault.key.pem /opt/vault/tls/",
       "sudo chown -R vault:vault /opt/vault/tls/",
       "sudo chmod -R 600 /opt/vault/tls",
       "sudo chmod 700 /opt/vault/tls",
@@ -141,29 +118,5 @@
       "fi"
     ],
     "only": ["amazon-linux-2-ami"]
-  },{
-    "type": "shell",
-    "inline": [
-      "git clone --branch {{user `consul_module_version`}} https://github.com/hashicorp/terraform-aws-consul.git /tmp/terraform-aws-consul",
-      "if test -n \"{{user `consul_download_url`}}\"; then",
-      " /tmp/terraform-aws-consul/modules/install-consul/install-consul --download-url {{user `consul_download_url`}};",
-      "else",
-      " /tmp/terraform-aws-consul/modules/install-consul/install-consul --version {{user `consul_version`}};",
-      "fi"
-    ],
-    "pause_before": "30s"
-  },{
-    "type": "shell",
-    "only": ["ubuntu16-ami", "amazon-linux-2-ami"],
-    "inline": [
-      "/tmp/terraform-aws-consul/modules/install-dnsmasq/install-dnsmasq"
-    ]
-  },{
-    "type": "shell",
-    "only": ["ubuntu18-ami"],
-    "inline": [
-      "/tmp/terraform-aws-consul/modules/setup-systemd-resolved/setup-systemd-resolved"
-    ],
-    "pause_before": "30s"
   }]
 }
