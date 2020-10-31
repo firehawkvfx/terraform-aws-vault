@@ -62,6 +62,22 @@
       "most_recent": true
     },
     "ssh_username": "ec2-user"
+  },{
+    "ami_name": "firehawk-bastion-centos7-{{isotime | clean_resource_name}}-{{uuid}}",
+    "ami_description": "A Cent OS 7 AMI that will accept connections from hosts with TLS Certs.",
+    "instance_type": "t2.micro",
+    "name": "centos7-ami",
+    "region": "{{user `aws_region`}}",
+    "type": "amazon-ebs",
+    "source_ami_filter": {
+      "filters": {
+        "name": "CentOS Linux 7 x86_64 HVM EBS *",
+    "product-code": "aw0evgkw8e5c1q413zgy5pjce"
+      },
+      "owners": ["679593333241"],
+      "most_recent": true
+    },
+    "ssh_username": "ec2-user"
   }],
   "provisioners": [{
     "type": "shell",
@@ -100,8 +116,7 @@
     "inline": [
       "sudo apt-get install -y git",
       "if [[ '{{user `install_auth_signing_script`}}' == 'true' ]]; then",
-      "sudo add-apt-repository universe",
-      "sudo apt-get install -y python-pip",
+      "sudo apt install -y python-pip",
       "LC_ALL=C && sudo pip install --user boto3",
       "fi"
     ],
@@ -116,6 +131,6 @@
       "LC_ALL=C && sudo pip install --user boto3",
       "fi"
     ],
-    "only": ["amazon-linux-2-ami"]
+    "only": ["amazon-linux-2-ami","centos7-ami"]
   }]
 }
