@@ -86,10 +86,12 @@
     "type": "shell",
     "inline": [
       "if [[ '{{user `install_auth_signing_script`}}' == 'true' ]]; then",
+      "sudo mkdir -p /opt/vault/scripts/",
       "sudo mv /tmp/sign-request.py /opt/vault/scripts/",
       "else",
       "sudo rm /tmp/sign-request.py",
       "fi",
+      "sudo mkdir -p /opt/vault/tls/",
       "sudo mv /tmp/ca.crt.pem /opt/vault/tls/",
       "sudo chown -R vault:vault /opt/vault/tls/",
       "sudo chmod -R 600 /opt/vault/tls",
