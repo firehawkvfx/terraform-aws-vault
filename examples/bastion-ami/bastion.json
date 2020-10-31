@@ -128,12 +128,7 @@
       "sudo apt-get -y install python3",
       "sudo apt-get -y install python-apt",
       "sudo apt-get install -y python3-pip",
-      "sudo pip3 install --user boto3",
-      "ls -dltriah /home/ubuntu/.cache/pip/*/",
-      "ls -dltriah /home/ubuntu/.cache/*/",
-      "ls -dltriah /home/ubuntu/*/",
-      "ls -dltriah /home/*/",
-      "ls -dltriah /*/"
+      "pip3 install --user boto3"
     ],
     "inline_shebang": "/bin/bash -e",
     "only": ["ubuntu16-ami","ubuntu18-ami"]
@@ -143,7 +138,7 @@
       "sudo yum update -y",
       "sudo yum install -y git",
       "sudo yum install -y python python3 python3-pip",
-      "sudo pip3 install --user boto3"
+      "pip3 install --user boto3"
     ],
     "only": ["amazon-linux-2-ami","centos7-ami"]
   }]
