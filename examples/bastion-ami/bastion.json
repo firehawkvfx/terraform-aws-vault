@@ -121,12 +121,18 @@
   },{
     "type": "shell",
     "inline": [
+      "export DEBIAN_FRONTEND='noninteractive'",
       "sudo apt-get -y update",
       "sudo apt-get install -y git",
       "sudo apt-get -y install python3",
       "sudo apt-get -y install python-apt",
       "sudo apt-get install -y python3-pip",
-      "sudo pip3 install --user boto3"
+      "sudo pip3 install --user boto3",
+      "ls -dltriah */ /home/ubuntu/.cache/pip/http",
+      "ls -dltriah */ /home/ubuntu/.cache/pip",
+      "ls -dltriah */ /home/ubuntu/.cache",
+      "ls -dltriah */ /home/ubuntu",
+      "ls -dltriah */ /home"
     ],
     "inline_shebang": "/bin/bash -e",
     "only": ["ubuntu16-ami","ubuntu18-ami"]
