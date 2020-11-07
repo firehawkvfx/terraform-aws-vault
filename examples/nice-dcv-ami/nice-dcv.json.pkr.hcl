@@ -164,7 +164,7 @@ build {
   #     ]
   # }
   provisioner "file" {
-    destination = "/tmp/${var.nvidia_driver}"
+    destination = "${var.nvidia_driver}"
     source      = "${var.nvidia_driver}"
   }
 
@@ -193,9 +193,9 @@ EOFO
   }
   provisioner "shell" {
     inline = [
-      "set -x; sudo chmod +x /tmp/${var.nvidia_driver}",
+      "set -x; sudo chmod +x ${var.nvidia_driver}",
       "ls -ltriah /tmp", # Check exec permissions
-      "sudo /bin/sh /tmp/${var.nvidia_driver} -s"
+      "sudo /bin/sh ${var.nvidia_driver} -s"
       ]
   }
   provisioner "shell" {
