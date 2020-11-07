@@ -39,7 +39,7 @@ source "amazon-ebs" "amazon-linux-2-ami" {
   ami_description = "An Amazon Linux 2 AMI that will accept connections from hosts with TLS Certs."
   ami_name        = "firehawk-base-amazon-linux-2-{{isotime}}-{{uuid}}"
   instance_type   = "t2.micro"
-  region          = "{{user `aws_region`}}"
+  region          = "${var.aws_region}"
   source_ami_filter {
     filters = {
       architecture                       = "x86_64"
@@ -60,7 +60,7 @@ source "amazon-ebs" "centos7-ami" {
   ami_description = "A Cent OS 7 AMI that will accept connections from hosts with TLS Certs."
   ami_name        = "firehawk-base-centos7-{{isotime}}-{{uuid}}"
   instance_type   = "t2.micro"
-  region          = "{{user `aws_region`}}"
+  region          = "${var.aws_region}"
   source_ami_filter {
     filters = {
       name         = "CentOS Linux 7 x86_64 HVM EBS *"
@@ -78,7 +78,7 @@ source "amazon-ebs" "ubuntu16-ami" {
   ami_description = "An Ubuntu 16.04 AMI that will accept connections from hosts with TLS Certs."
   ami_name        = "firehawk-base-ubuntu16-{{isotime}}-{{uuid}}"
   instance_type   = "t2.micro"
-  region          = "{{user `aws_region`}}"
+  region          = "${var.aws_region}"
   source_ami_filter {
     filters = {
       architecture                       = "x86_64"
@@ -99,7 +99,7 @@ source "amazon-ebs" "ubuntu18-ami" {
   ami_description = "An Ubuntu 18.04 AMI that will accept connections from hosts with TLS Certs."
   ami_name        = "firehawk-base-ubuntu18-{{isotime}}-{{uuid}}"
   instance_type   = "t2.micro"
-  region          = "{{user `aws_region`}}"
+  region          = "${var.aws_region}"
   source_ami_filter {
     filters = {
       architecture                       = "x86_64"
