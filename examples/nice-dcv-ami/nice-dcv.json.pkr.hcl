@@ -197,7 +197,7 @@ EOFO
       "ls -ltriah /tmp", # Check exec permissions
       "sudo init 3", # Stop x server
       "sudo /bin/sh ${var.nvidia_driver} -s --install-libglvnd",
-      "sudo init 5" # resume x server
+      # "sudo init 5" # resume x server
       ]
   }
   provisioner "shell" {
