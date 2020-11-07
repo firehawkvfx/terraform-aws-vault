@@ -184,12 +184,21 @@ echo 'GRUB_CMDLINE_LINUX="rdblacklist=nouveau"' | sudo tee --append /etc/default
 sudo cat /etc/default/grub
 EOFO
       ,
-      "sudo grub2-mkconfig -o /boot/grub2/grub.cfg",
+      "sudo grub2-mkconfig -o /boot/grub2/grub.cfg"
+      ]
+
+  }
+  provisioner "shell" {
+    expect_disconnect = true
+    inline            = ["sudo reboot"]
+
+  }
+  provisioner "shell" {
+    inline = [
       "ls -ltriah /tmp",
       "sudo chmod +x /tmp/${var.nvidia_driver}",
       "sudo /bin/sh /tmp/${var.nvidia_driver} --dkms -s --install-libglvnd"
       ]
-
   }
   provisioner "shell" {
     expect_disconnect = true
