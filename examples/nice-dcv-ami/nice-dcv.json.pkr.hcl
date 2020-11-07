@@ -179,9 +179,11 @@ blacklist rivafb
 blacklist nvidiafb
 blacklist rivatv
 EOF
+
+echo 'GRUB_CMDLINE_LINUX="rdblacklist=nouveau"' | sudo tee --append /etc/default/grub
+sudo cat /etc/default/grub
 EOFO
       ,
-      "GRUB_CMDLINE_LINUX=\"rdblacklist=nouveau\"",
       "sudo grub2-mkconfig -o /boot/grub2/grub.cfg",
       "ls -ltriah /tmp",
       "sudo chmod +x /tmp/${var.nvidia_driver}",
