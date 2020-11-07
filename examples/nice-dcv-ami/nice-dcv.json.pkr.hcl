@@ -170,7 +170,6 @@ build {
 
   provisioner "shell" {
     inline = [
-      "sudo yum groupinstall -y \"Graphical Administration Tools\"",
       "sudo yum install -y gcc kernel-devel-$(uname -r)",
       <<EOFO
 cat << EOF | sudo tee --append /etc/modprobe.d/blacklist.conf
