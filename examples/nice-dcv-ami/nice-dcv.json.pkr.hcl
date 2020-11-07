@@ -186,18 +186,20 @@ EOFO
       ,
       "sudo grub2-mkconfig -o /boot/grub2/grub.cfg",
       "sudo mv /boot/initramfs-$(uname -r).img /boot/initramfs-$(uname -r)-nouveau.img", # backup old initramfs
-      "sudo dracut -f /boot/initramfs-$(uname -r).img $(uname -r)"
+      "sudo dracut -f /boot/initramfs-$(uname -r).img $(uname -r)",
+      "sleep 5"
       ]
   }
   provisioner "shell" {
     expect_disconnect = true
-    inline            = ["sudo reboot"]
+    inline            = ["sudo systemctl reboot"]
   }
   provisioner "shell" {
     inline = [
       "set -x; ls -ltriah /tmp/nvidia; sudo chmod +x ${var.nvidia_driver}",
       "ls -ltriah /tmp/nvidia", # Check exec permissions
       # "sudo init 3", # Stop x server
+      "systemctl status reboot",
       "sudo systemctl get-default",
       "sudo systemctl isolate multi-user.target",
       "sudo /bin/sh ${var.nvidia_driver} --dkms -s --install-libglvnd",
@@ -206,15 +208,29 @@ EOFO
   }
   provisioner "shell" {
     expect_disconnect = true
-    inline            = ["sudo reboot"]
+    inline            = ["sudo systemctl reboot"]
   }
   provisioner "shell" {
     inline = [
       "set -x",
       "nvidia-smi -q | head", # Confirm the driver is working.
       "sudo systemctl get-default",
-      "sudo systemctl set-default graphical.target",
-      "sudo systemctl isolate graphical.target",
+      "sudo systemctl set-default graphical.target"
+      ]
+  }
+  provisioner "shell" {
+    expect_disconnect = true
+    inline            = ["sudo systemctl reboot"]
+  }
+
+# we seem to need to reboot because we produce these errors otherwise.
+# ==> amazon-ebs.centos7-nicedcv-nvidia-ami: + sudo systemctl isolate graphical.target
+# ==> amazon-ebs.centos7-nicedcv-nvidia-ami: Failed to start graphical.target: Transaction is destructive.
+
+  provisioner "shell" {
+    inline = [
+      "sudo systemctl get-default",
+      "set -o pipefail; sudo systemctl isolate graphical.target || systemctl status graphical.target",
       "ps aux | grep X | grep -v grep",
       "sudo yum install -y glx-utils", # Install the glxinfo Utility
       # "sudo DISPLAY=:0 XAUTHORITY=$(ps aux | grep \"X.*\\-auth\" | grep -v grep | sed -n 's/.*-auth \\([^ ]\\+\\).*/\\1/p') glxinfo | grep -i \"opengl.*version\"", # Verify OpenGL Software Rendering
