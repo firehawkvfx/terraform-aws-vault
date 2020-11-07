@@ -158,32 +158,42 @@ build {
     ]
     inline_shebang = "/bin/bash -e"
   }
-  # provisioner "shell" {
-  #   inline         = ["sudo systemd-run --property='After=apt-daily.service apt-daily-upgrade.service' --wait /bin/true"]
-  #   inline_shebang = "/bin/bash -e"
-  #   only           = ["ubuntu18-ami"]
-  # }
-  # provisioner "shell" {
-  #   inline         = ["echo 'debconf debconf/frontend select Noninteractive' | sudo debconf-set-selections", "sudo apt-get install -y -q", "sudo apt-get -y update", "sudo apt-get install -y git"]
-  #   inline_shebang = "/bin/bash -e"
-  #   only           = ["ubuntu16-ami", "ubuntu18-ami"]
-  # }
-  # provisioner "shell" {
-  #   inline         = ["sudo apt-get -y install python3.7", "sudo apt-get install -y python3-pip", "python3 -m pip install --upgrade pip", "python3 -m pip install boto3"]
-  #   inline_shebang = "/bin/bash -e"
-  #   only           = ["ubuntu18-ami"]
-  # }
   provisioner "shell" {
-    inline = ["sudo yum update -y", "sleep 5", "sudo yum install -y git", "sudo yum install -y python python3.7 python3-pip", "python3 -m pip install --user --upgrade pip", "python3 -m pip install --user boto3"]
-    only   = ["amazon-linux-2-ami", "amazon-ebs.centos7-ami"]
+    inline         = ["sudo systemd-run --property='After=apt-daily.service apt-daily-upgrade.service' --wait /bin/true"]
+    inline_shebang = "/bin/bash -e"
+    only           = ["amazon-ebs.ubuntu18-ami"]
   }
   provisioner "shell" {
-    inline = ["sudo yum groupinstall -y \"GNOME Desktop\"", "sudo yum upgrade -y"]
-    only   = ["amazon-linux-2-ami", "amazon-ebs.centos7-ami"]
+    inline         = ["echo 'debconf debconf/frontend select Noninteractive' | sudo debconf-set-selections", "sudo apt-get install -y -q", "sudo apt-get -y update", "sudo apt-get install -y git"]
+    inline_shebang = "/bin/bash -e"
+    only           = ["amazon-ebs.ubuntu16-ami", "amazon-ebs.ubuntu18-ami"]
+  }
+  provisioner "shell" {
+    inline         = ["sudo apt-get -y install python3.7", "sudo apt-get install -y python3-pip", "python3 -m pip install --upgrade pip", "python3 -m pip install boto3"]
+    inline_shebang = "/bin/bash -e"
+    only           = ["amazon-ebs.ubuntu18-ami"]
+  }
+  provisioner "shell" {
+    inline = [
+      "sudo yum update -y",
+      "sleep 5",
+      "sudo yum install -y git",
+      "sudo yum install -y python python3.7 python3-pip",
+      "python3 -m pip install --user --upgrade pip",
+      "python3 -m pip install --user boto3"
+      ]
+    only   = ["amazon-ebs.amazon-linux-2-ami", "amazon-ebs.centos7-ami"]
+  }
+  provisioner "shell" {
+    inline = [
+      "sudo yum groupinstall -y \"GNOME Desktop\"",
+      "sudo yum upgrade -y"
+      ]
+    only   = ["amazon-ebs.amazon-linux-2-ami", "amazon-ebs.centos7-ami"]
   }
   provisioner "shell" {
     expect_disconnect = true
     inline            = ["sudo reboot"]
-    only              = ["amazon-linux-2-ami", "amazon-ebs.centos7-ami"]
+    only              = ["amazon-ebs.amazon-linux-2-ami", "amazon-ebs.centos7-ami"]
   }
 }
