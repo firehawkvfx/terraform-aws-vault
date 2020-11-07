@@ -201,7 +201,7 @@ EOFO
       "sudo systemctl get-default", # should be multi-user.target
       # "sleep 5; sudo systemctl isolate multi-user.target",
       "sudo /bin/sh ${var.nvidia_driver} --dkms -s --install-libglvnd",
-      "sudo dracut -fv"
+      "sudo dracut -fv" # Not entirely sure this is necesary.
       ]
   }
   provisioner "shell" {
@@ -213,8 +213,11 @@ EOFO
       "set -x",
       "nvidia-smi -q | head", # Confirm the driver is working.
       "sudo systemctl get-default",
+      "sudo yum groupinstall -y \"Graphical Administration Tools\"",
+      "sudo systemctl enable graphical.target",
+      "sudo systemctl start graphical.target",
       "sleep 5; sudo systemctl set-default graphical.target"
-      ]
+    ]
   }
   provisioner "shell" {
     expect_disconnect = true
@@ -238,7 +241,7 @@ EOFO
       "sudo ls -ltriah /etc/X11",
       # "nvidia-xconfig --preserve-busid --enable-all-gpus --connected-monitor=DFP-0,DFP-1,DFP-2,DFP-3", # multimonitor config
       # "sudo rm -rf /etc/X11/XF86Config*"
-      ]
+    ]
   }
   provisioner "shell" {
     expect_disconnect = true
@@ -247,9 +250,7 @@ EOFO
   provisioner "shell" {
     inline = [
       "set -x",
-      "sudo systemctl get-default; sleep 5",
-      # "sudo systemctl isolate multi-user.target",
-      # "sudo systemctl isolate graphical.target",
+      "sudo systemctl get-default",
       "sudo DISPLAY=:0 XAUTHORITY=$(ps aux | grep \"X.*\\-auth\" | grep -v grep | sed -n 's/.*-auth \\([^ ]\\+\\).*/\\1/p') glxinfo | grep -i \"opengl.*version\"",
       "sudo rpm --import https://d1uj6qtbmh3dt5.cloudfront.net/NICE-GPG-KEY",
       "wget https://d1uj6qtbmh3dt5.cloudfront.net/2020.1/Servers/nice-dcv-2020.1-9012-el7-x86_64.tgz",
