@@ -7,7 +7,7 @@ export AWS_DEFAULT_REGION=$(curl -s http://169.254.169.254/latest/meta-data/plac
 # Packer Vars
 export PKR_VAR_aws_region="$AWS_DEFAULT_REGION"
 if [[ -f "../bastion-ami/manifest.json" ]]; then
-    export PKR_VAR_bastion_centos7_ami="$(jq -r '.builds[] | select(.name == "centos7-ami") | .artifact_id' ../bastion-ami/manifest.json | cut -d ":" -f2)"
+    export PKR_VAR_bastion_centos7_ami="$(jq -r '.builds[] | select(.name == "centos7-ami") | .artifact_id' ../bastion-ami/manifest.json | tail -1 | cut -d ":" -f2)"
     echo "Found bastion_cento7_ami in manifest: PKR_VAR_bastion_centos7_ami=$PKR_VAR_bastion_centos7_ami"
 fi
 export PACKER_LOG=1
