@@ -151,5 +151,17 @@
       "python3 -m pip install --user boto3"
     ],
     "only": ["amazon-linux-2-ami","centos7-ami"]
+  },{
+    "type": "shell",
+    "inline": [
+      "sudo yum groupinstall -y \"GNOME Desktop\"",
+      "sudo yum upgrade -y"
+    ],
+    "only": ["amazon-linux-2-ami","centos7-ami"]
+  },{
+    "inline": "sudo reboot",
+    "type": "shell",
+    "expect_disconnect": true,
+    "only": ["amazon-linux-2-ami","centos7-ami"]
   }]
 }

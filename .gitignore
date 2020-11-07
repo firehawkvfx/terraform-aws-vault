@@ -4,6 +4,9 @@ terraform.tfstate
 terraform.tfvars
 *.tfstate*
 
+# Packer files
+packerlog.log
+
 # OS X files
 .history
 .DS_Store
