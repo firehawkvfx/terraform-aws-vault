@@ -186,7 +186,7 @@ EOFO
       ,
       "sudo grub2-mkconfig -o /boot/grub2/grub.cfg",
       "sudo mv /boot/initramfs-$(uname -r).img /boot/initramfs-$(uname -r)-nouveau.img", # backup old initramfs
-      "sudo dracut -f /boot/initramfs-$(uname -r).img $(uname -r)",
+      "sudo dracut -fv /boot/initramfs-$(uname -r).img $(uname -r)",
       "sleep 5"
       ]
   }
@@ -221,7 +221,7 @@ EOFO
     inline            = ["sudo reboot"]
   }
 
-# Ihis point could be snapshotted for a gpu instance to render.  Instead we continue to enable a graphical ui.
+# This point could be snapshotted for a gpu instance to render.  Instead we continue to enable a graphical ui.
 
 # we seem to need to reboot because we produce these errors otherwise.
 # ==> amazon-ebs.centos7-nicedcv-nvidia-ami: + sudo systemctl isolate graphical.target
@@ -229,14 +229,15 @@ EOFO
 
   provisioner "shell" {
     inline = [
-      "sudo systemctl get-default; sleep 5",
-      "set -o pipefail; sudo systemctl isolate graphical.target || systemctl status graphical.target",
+      "set -x; sudo systemctl get-default; sleep 5",
+      # "set -o pipefail; sudo systemctl isolate graphical.target || systemctl status graphical.target",
       "ps aux | grep X | grep -v grep",
       "sudo yum install -y glx-utils", # Install the glxinfo Utility
       # "sudo DISPLAY=:0 XAUTHORITY=$(ps aux | grep \"X.*\\-auth\" | grep -v grep | sed -n 's/.*-auth \\([^ ]\\+\\).*/\\1/p') glxinfo | grep -i \"opengl.*version\"", # Verify OpenGL Software Rendering
       "nvidia-xconfig --preserve-busid --enable-all-gpus",
+      "sudo ls -ltriah /etc/X11",
       # "nvidia-xconfig --preserve-busid --enable-all-gpus --connected-monitor=DFP-0,DFP-1,DFP-2,DFP-3", # multimonitor config
-      "sudo rm -rf /etc/X11/XF86Config*"
+      # "sudo rm -rf /etc/X11/XF86Config*"
       ]
   }
   provisioner "shell" {
@@ -246,6 +247,7 @@ EOFO
   provisioner "shell" {
     inline = [
       "set -x",
+      "sudo systemctl get-default; sleep 5",
       # "sudo systemctl isolate multi-user.target",
       # "sudo systemctl isolate graphical.target",
       "sudo DISPLAY=:0 XAUTHORITY=$(ps aux | grep \"X.*\\-auth\" | grep -v grep | sed -n 's/.*-auth \\([^ ]\\+\\).*/\\1/p') glxinfo | grep -i \"opengl.*version\"",
