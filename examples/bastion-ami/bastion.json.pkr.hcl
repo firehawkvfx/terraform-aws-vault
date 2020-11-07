@@ -199,15 +199,17 @@ build {
     inline            = ["sudo reboot"]
     only              = ["amazon-ebs.amazon-linux-2-ami", "amazon-ebs.centos7-ami"]
   }
+
+  post-processor "manifest" {
+      output = "manifest.json"
+      strip_path = true
+      custom_data = {
+        timestamp = "${local.timestamp}"
+      }
+  }
 }
 
-post-processor "manifest" {
-    output = "manifest.json"
-    strip_path = true
-    custom_data = {
-      timestamp = "${local.timestamp}"
-    }
-}
+
 
 # Example query for the output ami:
 # #!/bin/bash
