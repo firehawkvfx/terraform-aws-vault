@@ -103,47 +103,50 @@ build {
     destination = "/tmp/ca.crt.pem"
     source      = "${var.ca_public_key_path}"
   }
-  provisioner "shell" {
-    inline         = [
-      "if [[ '${var.install_auth_signing_script}' == 'true' ]]; then",
-      "sudo mkdir -p /opt/vault/scripts/",
-      "sudo mv /tmp/sign-request.py /opt/vault/scripts/",
-      "else",
-      "sudo rm /tmp/sign-request.py",
-      "fi",
-      "sudo mkdir -p /opt/vault/tls/",
-      "sudo mv /tmp/ca.crt.pem /opt/vault/tls/",
-      "echo 'TrustedUserCAKeys /opt/vault/tls/ca.crt.pem' | sudo tee -a /etc/ssh/sshd_config",
-      "echo \"@cert-authority * $(sudo cat /opt/vault/tls/ca.crt.pem)\" | sudo tee -a /etc/ssh/ssh_known_hosts",
-      "sudo chmod -R 600 /opt/vault/tls",
-      "sudo chmod 700 /opt/vault/tls",
-      "sudo /tmp/terraform-aws-vault/modules/update-certificate-store/update-certificate-store --cert-file-path /opt/vault/tls/ca.crt.pem"
-      ]
-    inline_shebang = "/bin/bash -e"
-  }
-  provisioner "shell" {
-    inline = [
-      "sudo yum update -y",
-      "sleep 5",
-      "sudo yum install -y git",
-      "sudo yum install -y python python3.7 python3-pip",
-      "python3 -m pip install --user --upgrade pip",
-      "python3 -m pip install --user boto3"
-      ]
 
-  }
-  provisioner "shell" {
-    inline = [
-      "sudo yum groupinstall -y \"GNOME Desktop\"",
-      "sudo yum upgrade -y"
-      ]
+  # These shell provisioners are commented out since all these steps should be done in the base image because yum update takes a long time
 
-  }
-  provisioner "shell" {
-    expect_disconnect = true
-    inline            = "sudo reboot"
+  # provisioner "shell" {
+  #   inline         = [
+  #     "if [[ '${var.install_auth_signing_script}' == 'true' ]]; then",
+  #     "sudo mkdir -p /opt/vault/scripts/",
+  #     "sudo mv /tmp/sign-request.py /opt/vault/scripts/",
+  #     "else",
+  #     "sudo rm /tmp/sign-request.py",
+  #     "fi",
+  #     "sudo mkdir -p /opt/vault/tls/",
+  #     "sudo mv /tmp/ca.crt.pem /opt/vault/tls/",
+  #     "echo 'TrustedUserCAKeys /opt/vault/tls/ca.crt.pem' | sudo tee -a /etc/ssh/sshd_config",
+  #     "echo \"@cert-authority * $(sudo cat /opt/vault/tls/ca.crt.pem)\" | sudo tee -a /etc/ssh/ssh_known_hosts",
+  #     "sudo chmod -R 600 /opt/vault/tls",
+  #     "sudo chmod 700 /opt/vault/tls",
+  #     "sudo /tmp/terraform-aws-vault/modules/update-certificate-store/update-certificate-store --cert-file-path /opt/vault/tls/ca.crt.pem"
+  #     ]
+  #   inline_shebang = "/bin/bash -e"
+  # }
+  # provisioner "shell" {
+  #   inline = [
+  #     "sudo yum update -y",
+  #     "sleep 5",
+  #     "sudo yum install -y git",
+  #     "sudo yum install -y python python3.7 python3-pip",
+  #     "python3 -m pip install --user --upgrade pip",
+  #     "python3 -m pip install --user boto3"
+  #     ]
 
-  }
+  # }
+  # provisioner "shell" {
+  #   inline = [
+  #     "sudo yum groupinstall -y \"GNOME Desktop\"",
+  #     "sudo yum upgrade -y"
+  #     ]
+
+  # }
+  # provisioner "shell" {
+  #   expect_disconnect = true
+  #   inline            = ["sudo reboot"]
+  # }
+  
   provisioner "shell" {
     inline = [
       "sudo yum install -y gcc kernel-devel-$(uname -r)",
@@ -167,7 +170,7 @@ EOFO
   }
   provisioner "shell" {
     expect_disconnect = true
-    inline            = "sudo reboot"
+    inline            = ["sudo reboot"]
 
   }
   provisioner "shell" {
@@ -194,7 +197,8 @@ EOFO
       "sudo yum install -y nice-dcv-server-2020.1.9012-1.el7.x86_64.rpm",
       "sudo yum install -y nice-xdcv-2020.1.338-1.el7.x86_64.rpm",
       "# gpu sharing disabled but can be enabled for workstations # sudo yum install -y nice-dcv-gl-2020.1.840-1.el7.x86_64.rpm",
-      "# usb devices disabled # sudo yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm; sudo yum install dkms; sudo dcvusbdriverinstaller"]
+      "# usb devices disabled # sudo yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm; sudo yum install dkms; sudo dcvusbdriverinstaller"
+      ]
   }
   post-processor "manifest" {
       output = "manifest.json"
