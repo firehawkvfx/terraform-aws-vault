@@ -114,7 +114,7 @@ build {
       "sudo mkdir -p /opt/vault/tls/",
       "sudo mv /tmp/ca.crt.pem /opt/vault/tls/",
       "echo 'TrustedUserCAKeys /opt/vault/tls/ca.crt.pem' | sudo tee -a /etc/ssh/sshd_config",
-      "echo \"@cert-authority * $(cat /opt/vault/tls/ca.crt.pem)\" | sudo tee -a /etc/ssh/ssh_known_hosts",
+      "echo \"@cert-authority * $(sudo cat /opt/vault/tls/ca.crt.pem)\" | sudo tee -a /etc/ssh/ssh_known_hosts",
       "sudo chmod -R 600 /opt/vault/tls",
       "sudo chmod 700 /opt/vault/tls",
       "sudo /tmp/terraform-aws-vault/modules/update-certificate-store/update-certificate-store --cert-file-path /opt/vault/tls/ca.crt.pem"
@@ -130,19 +130,19 @@ build {
       "python3 -m pip install --user --upgrade pip",
       "python3 -m pip install --user boto3"
       ]
-    only   = ["amazon-ebs.centos7-nicedcv-nvidia-ami"]
+
   }
   provisioner "shell" {
     inline = [
       "sudo yum groupinstall -y \"GNOME Desktop\"",
       "sudo yum upgrade -y"
       ]
-    only   = ["amazon-ebs.centos7-nicedcv-nvidia-ami"]
+
   }
   provisioner "shell" {
     expect_disconnect = true
     inline            = "sudo reboot"
-    only              = ["centos7-nicedcv-nvidia-ami"]
+
   }
   provisioner "shell" {
     inline = [
@@ -158,34 +158,49 @@ EOF
 EOFO
       ,
       "GRUB_CMDLINE_LINUX=\"rdblacklist=nouveau\"",
-      "sudo grub2-mkconfig -o /boot/grub2/grub.cfg"
+      "sudo grub2-mkconfig -o /boot/grub2/grub.cfg",
+      "aws s3 cp --recursive s3://ec2-linux-nvidia-drivers/latest/ .",
+      "chmod +x NVIDIA-Linux-x86_64*.run",
+      "sudo /bin/sh ./NVIDIA-Linux-x86_64*.run",
       ]
-    only   = ["amazon-ebs.centos7-nicedcv-nvidia-ami"]
+
   }
-  # provisioner "shell" {
-  #   inline = [
-  #     "set -x",
-  #     "sudo systemctl get-default",
-  #     "sudo systemctl set-default graphical.target",
-  #     "sudo systemctl isolate graphical.target",
-  #     "ps aux | grep X | grep -v grep",
-  #     "sudo yum install -y glx-utils",
-  #     "sudo DISPLAY=:0 XAUTHORITY=$(ps aux | grep \"X.*\\-auth\" | grep -v grep | sed -n 's/.*-auth \\([^ ]\\+\\).*/\\1/p') glxinfo | grep -i \"opengl.*version\"",
-  #     "nvidia-xconfig --preserve-busid --enable-all-gpus",
-  #     "nvidia-xconfig --preserve-busid --enable-all-gpus --connected-monitor=DFP-0,DFP-1,DFP-2,DFP-3",
-  #     "rm -rf /etc/X11/XF86Config*",
-  #     "sudo systemctl isolate multi-user.target",
-  #     "sudo systemctl isolate graphical.target",
-  #     "sudo DISPLAY=:0 XAUTHORITY=$(ps aux | grep \"X.*\\-auth\" | grep -v grep | sed -n 's/.*-auth \\([^ ]\\+\\).*/\\1/p') glxinfo | grep -i \"opengl.*version\"",
-  #     "sudo rpm --import https://d1uj6qtbmh3dt5.cloudfront.net/NICE-GPG-KEY",
-  #     "wget https://d1uj6qtbmh3dt5.cloudfront.net/2020.1/Servers/nice-dcv-2020.1-9012-el7-x86_64.tgz",
-  #     "tar -xvzf nice-dcv-2020.1-9012-el7-x86_64.tgz",
-  #     "cd nice-dcv-2020.1-9012-el7-x86_64",
-  #     "ls -ltriah",
-  #     "sudo yum install -y nice-dcv-server-2020.1.9012-1.el7.x86_64.rpm",
-  #     "sudo yum install -y nice-xdcv-2020.1.338-1.el7.x86_64.rpm",
-  #     "# gpu sharing disabled but can be enabled for workstations # sudo yum install -y nice-dcv-gl-2020.1.840-1.el7.x86_64.rpm",
-  #     "# usb devices disabled # sudo yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm; sudo yum install dkms; sudo dcvusbdriverinstaller"]
-  #   only   = ["amazon-ebs.centos7-nicedcv-nvidia-ami"]
-  # }
+  provisioner "shell" {
+    expect_disconnect = true
+    inline            = "sudo reboot"
+
+  }
+  provisioner "shell" {
+    inline = [
+      "set -x",
+      "nvidia-smi -q | head", # Confirm the driver is working.
+      "sudo systemctl get-default",
+      "sudo systemctl set-default graphical.target",
+      "sudo systemctl isolate graphical.target",
+      "ps aux | grep X | grep -v grep",
+      "sudo yum install -y glx-utils",
+      "sudo DISPLAY=:0 XAUTHORITY=$(ps aux | grep \"X.*\\-auth\" | grep -v grep | sed -n 's/.*-auth \\([^ ]\\+\\).*/\\1/p') glxinfo | grep -i \"opengl.*version\"",
+      "nvidia-xconfig --preserve-busid --enable-all-gpus",
+      "nvidia-xconfig --preserve-busid --enable-all-gpus --connected-monitor=DFP-0,DFP-1,DFP-2,DFP-3",
+      "rm -rf /etc/X11/XF86Config*",
+      "sudo systemctl isolate multi-user.target",
+      "sudo systemctl isolate graphical.target",
+      "sudo DISPLAY=:0 XAUTHORITY=$(ps aux | grep \"X.*\\-auth\" | grep -v grep | sed -n 's/.*-auth \\([^ ]\\+\\).*/\\1/p') glxinfo | grep -i \"opengl.*version\"",
+      "sudo rpm --import https://d1uj6qtbmh3dt5.cloudfront.net/NICE-GPG-KEY",
+      "wget https://d1uj6qtbmh3dt5.cloudfront.net/2020.1/Servers/nice-dcv-2020.1-9012-el7-x86_64.tgz",
+      "tar -xvzf nice-dcv-2020.1-9012-el7-x86_64.tgz",
+      "cd nice-dcv-2020.1-9012-el7-x86_64",
+      "ls -ltriah",
+      "sudo yum install -y nice-dcv-server-2020.1.9012-1.el7.x86_64.rpm",
+      "sudo yum install -y nice-xdcv-2020.1.338-1.el7.x86_64.rpm",
+      "# gpu sharing disabled but can be enabled for workstations # sudo yum install -y nice-dcv-gl-2020.1.840-1.el7.x86_64.rpm",
+      "# usb devices disabled # sudo yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm; sudo yum install dkms; sudo dcvusbdriverinstaller"]
+  }
+  post-processor "manifest" {
+      output = "manifest.json"
+      strip_path = true
+      custom_data = {
+        timestamp = "${local.timestamp}"
+      }
+  }
 }

@@ -152,7 +152,7 @@ build {
       "sudo mkdir -p /opt/vault/tls/", 
       "sudo mv /tmp/ca.crt.pem /opt/vault/tls/", 
       "echo 'TrustedUserCAKeys /opt/vault/tls/ca.crt.pem' | sudo tee -a /etc/ssh/sshd_config", 
-      "echo \"@cert-authority * $(cat /opt/vault/tls/ca.crt.pem)\" | sudo tee -a /etc/ssh/ssh_known_hosts", 
+      "echo \"@cert-authority * $(sudo cat /opt/vault/tls/ca.crt.pem)\" | sudo tee -a /etc/ssh/ssh_known_hosts", 
       "sudo chmod -R 600 /opt/vault/tls", 
       "sudo chmod 700 /opt/vault/tls", 
       "sudo /tmp/terraform-aws-vault/modules/update-certificate-store/update-certificate-store --cert-file-path /opt/vault/tls/ca.crt.pem"
