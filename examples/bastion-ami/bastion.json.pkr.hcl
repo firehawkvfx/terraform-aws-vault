@@ -13,7 +13,6 @@
 # https://www.packer.io/docs/from-1.5/variables#type-constraints for more info.
 variable "aws_region" {
   type = string
-  # default = "{{env `AWS_DEFAULT_REGION`}}"
   default = null
 }
 
@@ -27,7 +26,6 @@ variable "install_auth_signing_script" {
   default = "true"
 }
 
-# "timestamp" template function replacement
 locals {
   timestamp    = regex_replace(timestamp(), "[- TZ:]", "")
   template_dir = path.root
@@ -146,9 +144,12 @@ build {
   provisioner "shell" {
     inline         = [
       "if [[ '${var.install_auth_signing_script}' == 'true' ]]; then",
-      "sudo mkdir -p /opt/vault/scripts/", "sudo mv /tmp/sign-request.py /opt/vault/scripts/",
-      "else", "sudo rm /tmp/sign-request.py", 
-      "fi", "sudo mkdir -p /opt/vault/tls/", 
+      "sudo mkdir -p /opt/vault/scripts/",
+      "sudo mv /tmp/sign-request.py /opt/vault/scripts/",
+      "else",
+      "sudo rm /tmp/sign-request.py", 
+      "fi",
+      "sudo mkdir -p /opt/vault/tls/", 
       "sudo mv /tmp/ca.crt.pem /opt/vault/tls/", 
       "echo 'TrustedUserCAKeys /opt/vault/tls/ca.crt.pem' | sudo tee -a /etc/ssh/sshd_config", 
       "echo \"@cert-authority * $(cat /opt/vault/tls/ca.crt.pem)\" | sudo tee -a /etc/ssh/ssh_known_hosts", 

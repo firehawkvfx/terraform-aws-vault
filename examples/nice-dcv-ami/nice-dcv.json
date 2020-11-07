@@ -2,7 +2,7 @@
   "min_packer_version": "0.12.0",
   "variables": {
     "aws_region": "{{env `AWS_DEFAULT_REGION`}}",
-    "source_ami_centos": null,
+    "source_ami_centos": "",
     "install_auth_signing_script": "true",
     "ca_public_key_path": "/home/ec2-user/.ssh/tls/ca.crt.pem"
   },
