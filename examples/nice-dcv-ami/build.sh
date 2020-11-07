@@ -1,11 +1,13 @@
 #!/bin/bash
 
+# Take the base AMI created from the bastion-ami folder and install NVIDIA drivers.
+
 export AWS_DEFAULT_REGION=$(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone | sed 's/\(.*\)[a-z]/\1/')
 
 # Packer Vars
 export PKR_VAR_aws_region="$AWS_DEFAULT_REGION"
-if [[ -f "modules/terraform-aws-vault/examples/bastion-ami/manifest.json" ]]; then
-    export PKR_VAR_bastion_centos7_ami="$(jq -r '.builds[] | select(.name == "centos7-ami") | .artifact_id' modules/terraform-aws-vault/examples/bastion-ami/manifest.json | cut -d ":" -f2)"
+if [[ -f "../bastion-ami/manifest.json" ]]; then
+    export PKR_VAR_bastion_centos7_ami="$(jq -r '.builds[] | select(.name == "centos7-ami") | .artifact_id' ../bastion-ami/manifest.json | cut -d ":" -f2)"
     echo "Found bastion_cento7_ami in manifest: PKR_VAR_bastion_centos7_ami=$PKR_VAR_bastion_centos7_ami"
 fi
 export PACKER_LOG=1
