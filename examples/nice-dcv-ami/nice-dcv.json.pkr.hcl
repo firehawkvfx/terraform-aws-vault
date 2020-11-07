@@ -183,16 +183,9 @@ EOFO
       ,
       "GRUB_CMDLINE_LINUX=\"rdblacklist=nouveau\"",
       "sudo grub2-mkconfig -o /boot/grub2/grub.cfg",
-#       <<EOF
-# curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-# unzip awscliv2.zip
-# sudo ./aws/install
-# aws --version
-# EOF
-#       ,
-#       "aws s3 cp --recursive s3://ec2-linux-nvidia-drivers/latest/ .",
+      "ls -ltriah /tmp",
       "sudo chmod +x /tmp/${var.nvidia_driver}",
-      "sudo /bin/sh /tmp/${var.nvidia_driver}"
+      "sudo /bin/sh /tmp/${var.nvidia_driver} --dkms -s --install-libglvnd"
       ]
 
   }
