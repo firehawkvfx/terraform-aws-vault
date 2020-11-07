@@ -6,6 +6,7 @@ terraform.tfvars
 
 # Packer files
 packerlog.log
+NVIDIA-Linux-x86_64-*
 
 # OS X files
 .history

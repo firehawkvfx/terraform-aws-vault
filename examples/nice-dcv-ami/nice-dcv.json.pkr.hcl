@@ -28,7 +28,12 @@ variable "install_auth_signing_script" {
 
 variable "bastion_centos7_ami" {
   type    = string
-  default = ""
+  default = null
+}
+
+variable "nvidia_driver" { # run aws s3 cp --recursive s3://ec2-linux-nvidia-drivers/latest/ . # to pull latest nvidia driver, then provide the file name as this var
+  type = string
+  default = null
 }
 
 locals {
@@ -152,15 +157,15 @@ build {
   #   inline            = ["sudo reboot"]
   # }
 
-  provisioner "shell-local" {
-    inline = [
-      "aws s3 cp --recursive s3://ec2-linux-nvidia-drivers/latest/ .",
-      "ls -ltriah"
-      ]
-  }
+  # provisioner "shell-local" {
+  #   inline = [
+  #     "aws s3 cp --recursive s3://ec2-linux-nvidia-drivers/latest/ .",
+  #     "ls -ltriah"
+  #     ]
+  # }
   provisioner "file" {
-    destination = "/tmp/"
-    source      = "${local.template_dir}/NVIDIA-Linux-x86_64*.run"
+    destination = "/tmp/${var.nvidia_driver}"
+    source      = "${local.template_dir}/${var.nvidia_driver}"
   }
 
   provisioner "shell" {
@@ -186,8 +191,8 @@ EOFO
 # EOF
 #       ,
 #       "aws s3 cp --recursive s3://ec2-linux-nvidia-drivers/latest/ .",
-      "sudo chmod +x /tmp/NVIDIA-Linux-x86_64*.run",
-      "sudo /bin/sh /tmp/NVIDIA-Linux-x86_64*.run",
+      "sudo chmod +x /tmp/${var.nvidia_driver}",
+      "sudo /bin/sh /tmp/${var.nvidia_driver}",
       ]
 
   }
