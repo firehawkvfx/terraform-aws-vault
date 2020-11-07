@@ -198,9 +198,10 @@ EOFO
     inline = [
       "set -x; ls -ltriah /tmp/nvidia; sudo chmod +x ${var.nvidia_driver}",
       "ls -ltriah /tmp/nvidia", # Check exec permissions
-      "sudo systemctl get-default",
-      "sudo systemctl isolate multi-user.target",
-      "sudo /bin/sh ${var.nvidia_driver} --dkms -s --install-libglvnd"
+      "sudo systemctl get-default", # should be multi-user.target
+      # "sleep 5; sudo systemctl isolate multi-user.target",
+      "sudo /bin/sh ${var.nvidia_driver} --dkms -s --install-libglvnd",
+      "sudo dracut -fv"
       ]
   }
   provisioner "shell" {
@@ -212,7 +213,7 @@ EOFO
       "set -x",
       "nvidia-smi -q | head", # Confirm the driver is working.
       "sudo systemctl get-default",
-      "sudo systemctl set-default graphical.target"
+      "sleep 5; sudo systemctl set-default graphical.target"
       ]
   }
   provisioner "shell" {
@@ -228,7 +229,7 @@ EOFO
 
   provisioner "shell" {
     inline = [
-      "sudo systemctl get-default",
+      "sudo systemctl get-default; sleep 5",
       "set -o pipefail; sudo systemctl isolate graphical.target || systemctl status graphical.target",
       "ps aux | grep X | grep -v grep",
       "sudo yum install -y glx-utils", # Install the glxinfo Utility
