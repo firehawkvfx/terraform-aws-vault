@@ -146,7 +146,7 @@ build {
   #   expect_disconnect = true
   #   inline            = ["sudo reboot"]
   # }
-  
+
   provisioner "shell" {
     inline = [
       "sudo yum install -y gcc kernel-devel-$(uname -r)",
@@ -162,6 +162,13 @@ EOFO
       ,
       "GRUB_CMDLINE_LINUX=\"rdblacklist=nouveau\"",
       "sudo grub2-mkconfig -o /boot/grub2/grub.cfg",
+      <<EOF
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+aws --version
+EOF
+      ,
       "aws s3 cp --recursive s3://ec2-linux-nvidia-drivers/latest/ .",
       "chmod +x NVIDIA-Linux-x86_64*.run",
       "sudo /bin/sh ./NVIDIA-Linux-x86_64*.run",
