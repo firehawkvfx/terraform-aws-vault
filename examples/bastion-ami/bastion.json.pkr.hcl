@@ -183,7 +183,7 @@ build {
   }
   provisioner "shell" {
     expect_disconnect = true
-    inline            = "sudo reboot"
+    inline            = ["sudo reboot"]
     only              = ["amazon-linux-2-ami", "amazon-ebs.centos7-ami"]
   }
 }
