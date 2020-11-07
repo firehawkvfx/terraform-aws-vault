@@ -184,6 +184,9 @@ build {
       ]
     only   = ["amazon-ebs.amazon-linux-2-ami", "amazon-ebs.centos7-ami"]
   }
+  
+  # Gnome Desktop is installed on Centos AMI's to be ready for the Gnome UI if required.
+
   provisioner "shell" {
     inline = [
       "sudo yum groupinstall -y \"GNOME Desktop\"",
