@@ -200,3 +200,17 @@ build {
     only              = ["amazon-ebs.amazon-linux-2-ami", "amazon-ebs.centos7-ami"]
   }
 }
+
+post-processor "manifest" {
+    output = "manifest.json"
+    strip_path = true
+    custom_data = {
+      timestamp = "${local.timestamp}"
+    }
+}
+
+# Example query for the output ami:
+# #!/bin/bash
+
+# AMI_ID=$(jq -r '.builds[-1].artifact_id' manifest.json | cut -d ":" -f2)
+# echo $AMI_ID
