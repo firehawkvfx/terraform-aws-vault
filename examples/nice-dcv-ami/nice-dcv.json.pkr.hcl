@@ -165,7 +165,7 @@ build {
   # }
   provisioner "file" {
     destination = "/tmp/${var.nvidia_driver}"
-    source      = "${local.template_dir}/${var.nvidia_driver}"
+    source      = "/tmp/${var.nvidia_driver}"
   }
 
   provisioner "shell" {
@@ -186,24 +186,21 @@ EOFO
       ,
       "sudo grub2-mkconfig -o /boot/grub2/grub.cfg"
       ]
-
   }
   provisioner "shell" {
     expect_disconnect = true
     inline            = ["sudo reboot"]
-
   }
   provisioner "shell" {
     inline = [
-      "ls -ltriah /tmp",
-      "sudo chmod +x /tmp/${var.nvidia_driver}",
-      "sudo /bin/sh /tmp/${var.nvidia_driver} --dkms -s --install-libglvnd"
+      "set -x; sudo chmod +x /tmp/${var.nvidia_driver}",
+      "ls -ltriah /tmp", # Check exec permissions
+      "sudo /bin/sh /tmp/${var.nvidia_driver} -s"
       ]
   }
   provisioner "shell" {
     expect_disconnect = true
     inline            = ["sudo reboot"]
-
   }
   provisioner "shell" {
     inline = [
