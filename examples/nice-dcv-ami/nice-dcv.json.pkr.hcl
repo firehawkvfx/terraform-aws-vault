@@ -262,8 +262,8 @@ EOFO
       "ls -ltriah",
       "sudo yum install -y nice-dcv-server-2020.1.9012-1.el7.x86_64.rpm",
       "sudo yum install -y nice-xdcv-2020.1.338-1.el7.x86_64.rpm",
-      "# gpu sharing disabled but can be enabled for workstations # sudo yum install -y nice-dcv-gl-2020.1.840-1.el7.x86_64.rpm",
-      "# usb devices disabled # sudo yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm; sudo yum install dkms; sudo dcvusbdriverinstaller"
+      # "# gpu sharing disabled but can be enabled for workstations # sudo yum install -y nice-dcv-gl-2020.1.840-1.el7.x86_64.rpm",
+      # "# usb devices disabled # sudo yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm; sudo yum install dkms; sudo dcvusbdriverinstaller"
       ]
   }
   post-processor "manifest" {
