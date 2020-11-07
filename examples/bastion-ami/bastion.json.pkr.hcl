@@ -12,9 +12,9 @@
 # constraints documentation
 # https://www.packer.io/docs/from-1.5/variables#type-constraints for more info.
 variable "aws_region" {
-  type    = string
+  type = string
   # default = "{{env `AWS_DEFAULT_REGION`}}"
-  default = "ap-southeast-2"
+  default = null
 }
 
 variable "ca_public_key_path" {
@@ -29,9 +29,9 @@ variable "install_auth_signing_script" {
 
 # "timestamp" template function replacement
 locals {
-  timestamp = regex_replace(timestamp(), "[- TZ:]", "")
+  timestamp    = regex_replace(timestamp(), "[- TZ:]", "")
   template_dir = path.root
-  }
+}
 
 # source blocks are generated from your builders; a source can be referenced in
 # build blocks. A build block runs provisioner and post-processors on a
@@ -144,35 +144,46 @@ build {
     source      = "${var.ca_public_key_path}"
   }
   provisioner "shell" {
-    inline         = ["if [[ '${var.install_auth_signing_script}' == 'true' ]]; then", "sudo mkdir -p /opt/vault/scripts/", "sudo mv /tmp/sign-request.py /opt/vault/scripts/", "else", "sudo rm /tmp/sign-request.py", "fi", "sudo mkdir -p /opt/vault/tls/", "sudo mv /tmp/ca.crt.pem /opt/vault/tls/", "echo 'TrustedUserCAKeys /opt/vault/tls/ca.crt.pem' | sudo tee -a /etc/ssh/sshd_config", "echo \"@cert-authority * $(cat /opt/vault/tls/ca.crt.pem)\" | sudo tee -a /etc/ssh/ssh_known_hosts", "sudo chmod -R 600 /opt/vault/tls", "sudo chmod 700 /opt/vault/tls", "sudo /tmp/terraform-aws-vault/modules/update-certificate-store/update-certificate-store --cert-file-path /opt/vault/tls/ca.crt.pem"]
+    inline         = [
+      "if [[ '${var.install_auth_signing_script}' == 'true' ]]; then",
+      "sudo mkdir -p /opt/vault/scripts/", "sudo mv /tmp/sign-request.py /opt/vault/scripts/",
+      "else", "sudo rm /tmp/sign-request.py", 
+      "fi", "sudo mkdir -p /opt/vault/tls/", 
+      "sudo mv /tmp/ca.crt.pem /opt/vault/tls/", 
+      "echo 'TrustedUserCAKeys /opt/vault/tls/ca.crt.pem' | sudo tee -a /etc/ssh/sshd_config", 
+      "echo \"@cert-authority * $(cat /opt/vault/tls/ca.crt.pem)\" | sudo tee -a /etc/ssh/ssh_known_hosts", 
+      "sudo chmod -R 600 /opt/vault/tls", 
+      "sudo chmod 700 /opt/vault/tls", 
+      "sudo /tmp/terraform-aws-vault/modules/update-certificate-store/update-certificate-store --cert-file-path /opt/vault/tls/ca.crt.pem"
+    ]
     inline_shebang = "/bin/bash -e"
   }
-  provisioner "shell" {
-    inline         = ["sudo systemd-run --property='After=apt-daily.service apt-daily-upgrade.service' --wait /bin/true"]
-    inline_shebang = "/bin/bash -e"
-    only           = ["ubuntu18-ami"]
-  }
-  provisioner "shell" {
-    inline         = ["echo 'debconf debconf/frontend select Noninteractive' | sudo debconf-set-selections", "sudo apt-get install -y -q", "sudo apt-get -y update", "sudo apt-get install -y git"]
-    inline_shebang = "/bin/bash -e"
-    only           = ["ubuntu16-ami", "ubuntu18-ami"]
-  }
-  provisioner "shell" {
-    inline         = ["sudo apt-get -y install python3.7", "sudo apt-get install -y python3-pip", "python3 -m pip install --upgrade pip", "python3 -m pip install boto3"]
-    inline_shebang = "/bin/bash -e"
-    only           = ["ubuntu18-ami"]
-  }
+  # provisioner "shell" {
+  #   inline         = ["sudo systemd-run --property='After=apt-daily.service apt-daily-upgrade.service' --wait /bin/true"]
+  #   inline_shebang = "/bin/bash -e"
+  #   only           = ["ubuntu18-ami"]
+  # }
+  # provisioner "shell" {
+  #   inline         = ["echo 'debconf debconf/frontend select Noninteractive' | sudo debconf-set-selections", "sudo apt-get install -y -q", "sudo apt-get -y update", "sudo apt-get install -y git"]
+  #   inline_shebang = "/bin/bash -e"
+  #   only           = ["ubuntu16-ami", "ubuntu18-ami"]
+  # }
+  # provisioner "shell" {
+  #   inline         = ["sudo apt-get -y install python3.7", "sudo apt-get install -y python3-pip", "python3 -m pip install --upgrade pip", "python3 -m pip install boto3"]
+  #   inline_shebang = "/bin/bash -e"
+  #   only           = ["ubuntu18-ami"]
+  # }
   provisioner "shell" {
     inline = ["sudo yum update -y", "sleep 5", "sudo yum install -y git", "sudo yum install -y python python3.7 python3-pip", "python3 -m pip install --user --upgrade pip", "python3 -m pip install --user boto3"]
-    only   = ["amazon-linux-2-ami", "centos7-ami"]
+    only   = ["amazon-linux-2-ami", "amazon-ebs.centos7-ami"]
   }
   provisioner "shell" {
     inline = ["sudo yum groupinstall -y \"GNOME Desktop\"", "sudo yum upgrade -y"]
-    only   = ["amazon-linux-2-ami", "centos7-ami"]
+    only   = ["amazon-linux-2-ami", "amazon-ebs.centos7-ami"]
   }
   provisioner "shell" {
     expect_disconnect = true
     inline            = "sudo reboot"
-    only              = ["amazon-linux-2-ami", "centos7-ami"]
+    only              = ["amazon-linux-2-ami", "amazon-ebs.centos7-ami"]
   }
 }
