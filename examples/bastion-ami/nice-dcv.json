@@ -123,8 +123,8 @@
   },{
     "type": "shell",
     "inline": [
-      "sudo yum groupinstall \"GNOME Desktop\"",
-      "sudo yum upgrade"
+      "sudo yum groupinstall -y \"GNOME Desktop\"",
+      "sudo yum upgrade -y"
     ],
     "only": ["amazon-linux-2-ami","centos7-nicedcv-nvidia-ami"]
   },{
@@ -139,7 +139,7 @@
       "sudo systemctl set-default graphical.target",
       "sudo systemctl isolate graphical.target",
       "ps aux | grep X | grep -v grep",
-      "sudo yum install glx-utils",
+      "sudo yum install -y glx-utils",
       "sudo DISPLAY=:0 XAUTHORITY=$(ps aux | grep \"X.*\\-auth\" | grep -v grep | sed -n 's/.*-auth \\([^ ]\\+\\).*/\\1/p') glxinfo | grep -i \"opengl.*version\"",
       "nvidia-xconfig --preserve-busid --enable-all-gpus",
       "nvidia-xconfig --preserve-busid --enable-all-gpus --connected-monitor=DFP-0,DFP-1,DFP-2,DFP-3",
@@ -152,10 +152,10 @@
       "tar -xvzf nice-dcv-2020.1-9012-el7-x86_64.tgz",
       "cd nice-dcv-2020.1-9012-el7-x86_64",
       "ls -ltriah",
-      "sudo yum install nice-dcv-server-2020.1.9012-1.el7.x86_64.rpm",
-      "sudo yum install nice-xdcv-2020.1.338-1.el7.x86_64.rpm",
-      "# gpu sharing disabled but can be enabled for workstations # sudo yum install nice-dcv-gl-2020.1.840-1.el7.x86_64.rpm",
-      "# usb devices disabled # sudo yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm; sudo yum install dkms; sudo dcvusbdriverinstaller"
+      "sudo yum install -y nice-dcv-server-2020.1.9012-1.el7.x86_64.rpm",
+      "sudo yum install -y nice-xdcv-2020.1.338-1.el7.x86_64.rpm",
+      "# gpu sharing disabled but can be enabled for workstations # sudo yum install -y nice-dcv-gl-2020.1.840-1.el7.x86_64.rpm",
+      "# usb devices disabled # sudo yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm; sudo yum install dkms; sudo dcvusbdriverinstaller"
     ],
     "only": ["amazon-linux-2-ami","centos7-nicedcv-nvidia-ami"]
   }]
