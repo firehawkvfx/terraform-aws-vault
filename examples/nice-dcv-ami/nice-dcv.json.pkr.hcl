@@ -218,7 +218,7 @@ EOFO
       "sudo systemctl get-default",
       # "sudo yum groupinstall -y \"Graphical Administration Tools\"",
       "sudo systemctl enable graphical.target",
-      "sudo systemctl start graphical.target",
+      # "sudo systemctl start graphical.target",
       "sleep 5; sudo systemctl set-default graphical.target"
     ]
   }
