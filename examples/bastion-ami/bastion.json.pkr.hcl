@@ -13,6 +13,7 @@
 # https://www.packer.io/docs/from-1.5/variables#type-constraints for more info.
 variable "aws_region" {
   type    = string
+  default = "{{env `AWS_DEFAULT_REGION`}}"
 }
 
 variable "ca_public_key_path" {
