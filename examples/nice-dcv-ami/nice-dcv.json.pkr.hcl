@@ -151,7 +151,8 @@ build {
       "sudo yum -y install kernel-devel",
       "sudo yum -y install epel-release",
       "sudo yum -y install dkms",
-      "sudo yum upgrade -y"
+      "sudo yum upgrade -y",
+      "mkdir -p /tmp/nvidia/" # ensure dir exists
       ]
   }
   provisioner "shell" {
@@ -181,7 +182,7 @@ sudo cat /etc/default/grub
 EOFO
       ,
       "sudo grub2-mkconfig -o /boot/grub2/grub.cfg",
-      "mv /boot/initramfs-$(uname -r).img /boot/initramfs-$(uname -r)-nouveau.img", # backup old initramfs
+      "sudo mv /boot/initramfs-$(uname -r).img /boot/initramfs-$(uname -r)-nouveau.img", # backup old initramfs
       "dracut -f /boot/initramfs-$(uname -r).img $(uname -r)"
       ]
   }
