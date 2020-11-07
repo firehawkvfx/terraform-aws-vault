@@ -183,7 +183,7 @@ EOFO
       ,
       "sudo grub2-mkconfig -o /boot/grub2/grub.cfg",
       "sudo mv /boot/initramfs-$(uname -r).img /boot/initramfs-$(uname -r)-nouveau.img", # backup old initramfs
-      "dracut -f /boot/initramfs-$(uname -r).img $(uname -r)"
+      "sudo dracut -f /boot/initramfs-$(uname -r).img $(uname -r)"
       ]
   }
   provisioner "shell" {
