@@ -198,8 +198,6 @@ EOFO
     inline = [
       "set -x; ls -ltriah /tmp/nvidia; sudo chmod +x ${var.nvidia_driver}",
       "ls -ltriah /tmp/nvidia", # Check exec permissions
-      # "sudo init 3", # Stop x server
-      "systemctl status reboot",
       "sudo systemctl get-default",
       "sudo systemctl isolate multi-user.target",
       "sudo /bin/sh ${var.nvidia_driver} --dkms -s --install-libglvnd"
