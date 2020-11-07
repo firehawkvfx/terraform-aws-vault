@@ -202,8 +202,7 @@ EOFO
       "systemctl status reboot",
       "sudo systemctl get-default",
       "sudo systemctl isolate multi-user.target",
-      "sudo /bin/sh ${var.nvidia_driver} --dkms -s --install-libglvnd",
-      # "sudo init 5" # resume x server
+      "sudo /bin/sh ${var.nvidia_driver} --dkms -s --install-libglvnd"
       ]
   }
   provisioner "shell" {
