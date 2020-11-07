@@ -192,12 +192,12 @@ build {
       "sudo yum groupinstall -y \"GNOME Desktop\"",
       "sudo yum upgrade -y"
       ]
-    only   = ["amazon-ebs.amazon-linux-2-ami", "amazon-ebs.centos7-ami"]
+    only   = ["amazon-ebs.centos7-ami"]
   }
   provisioner "shell" {
     expect_disconnect = true
     inline            = ["sudo reboot"]
-    only              = ["amazon-ebs.amazon-linux-2-ami", "amazon-ebs.centos7-ami"]
+    only              = ["amazon-ebs.centos7-ami"]
   }
 
   post-processor "manifest" {
