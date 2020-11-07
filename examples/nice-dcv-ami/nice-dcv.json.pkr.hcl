@@ -192,7 +192,7 @@ EOFO
 #       ,
 #       "aws s3 cp --recursive s3://ec2-linux-nvidia-drivers/latest/ .",
       "sudo chmod +x /tmp/${var.nvidia_driver}",
-      "sudo /bin/sh /tmp/${var.nvidia_driver}",
+      "sudo /bin/sh /tmp/${var.nvidia_driver}"
       ]
 
   }
