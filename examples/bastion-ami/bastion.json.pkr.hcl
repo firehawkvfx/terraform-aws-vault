@@ -28,7 +28,10 @@ variable "install_auth_signing_script" {
 }
 
 # "timestamp" template function replacement
-locals { timestamp = regex_replace(timestamp(), "[- TZ:]", "") }
+locals {
+  timestamp = regex_replace(timestamp(), "[- TZ:]", "")
+  template_dir = template_dir()
+  }
 
 # source blocks are generated from your builders; a source can be referenced in
 # build blocks. A build block runs provisioner and post-processors on a
@@ -128,13 +131,13 @@ build {
   #could not parse template for following block: "template: generated:3: function \"template_dir\" not defined"
   provisioner "file" {
     destination = "/tmp/terraform-aws-vault/modules"
-    source      = "{{template_dir}}/../../modules/"
+    source      = "${local.template_dir}/../../modules/"
   }
 
   #could not parse template for following block: "template: generated:3: function \"template_dir\" not defined"
   provisioner "file" {
     destination = "/tmp/sign-request.py"
-    source      = "{{template_dir}}/auth/sign-request.py"
+    source      = "${local.template_dir}/auth/sign-request.py"
   }
   provisioner "file" {
     destination = "/tmp/ca.crt.pem"
