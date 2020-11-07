@@ -73,11 +73,11 @@ source "amazon-ebs" "centos7-nicedcv-nvidia-ami" {
   region          = "${var.aws_region}"
   source_ami      = "${var.bastion_centos7_ami}"
   ssh_username    = "centos"
-  assume_role { # Since we need to read files from s3, we require a role with read access.
-      role_arn     = "arn:aws:iam::972620357255:role/S3-Admin-S3" # This needs to be replaced with a terraform output
-      session_name = "SESSION_NAME"
-      external_id  = "EXTERNAL_ID"
-  }
+  # assume_role { # Since we need to read files from s3, we require a role with read access.
+  #     role_arn     = "arn:aws:iam::972620357255:role/S3-Admin-S3" # This needs to be replaced with a terraform output
+  #     session_name = "SESSION_NAME"
+  #     external_id  = "EXTERNAL_ID"
+  # }
 }
 
 #could not parse template for following block: "template: generated:4: function \"clean_resource_name\" not defined"
@@ -152,6 +152,17 @@ build {
   #   inline            = ["sudo reboot"]
   # }
 
+  provisioner "shell-local" {
+    inline = [
+      "aws s3 cp --recursive s3://ec2-linux-nvidia-drivers/latest/ .",
+      "ls -ltriah"
+      ]
+  }
+  provisioner "file" {
+    destination = "/tmp/"
+    source      = "${local.template_dir}/NVIDIA-Linux-x86_64*.run"
+  }
+
   provisioner "shell" {
     inline = [
       "sudo yum install -y gcc kernel-devel-$(uname -r)",
@@ -167,16 +178,16 @@ EOFO
       ,
       "GRUB_CMDLINE_LINUX=\"rdblacklist=nouveau\"",
       "sudo grub2-mkconfig -o /boot/grub2/grub.cfg",
-      <<EOF
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-unzip awscliv2.zip
-sudo ./aws/install
-aws --version
-EOF
-      ,
-      "aws s3 cp --recursive s3://ec2-linux-nvidia-drivers/latest/ .",
-      "chmod +x NVIDIA-Linux-x86_64*.run",
-      "sudo /bin/sh ./NVIDIA-Linux-x86_64*.run",
+#       <<EOF
+# curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+# unzip awscliv2.zip
+# sudo ./aws/install
+# aws --version
+# EOF
+#       ,
+#       "aws s3 cp --recursive s3://ec2-linux-nvidia-drivers/latest/ .",
+      "sudo chmod +x /tmp/NVIDIA-Linux-x86_64*.run",
+      "sudo /bin/sh /tmp/NVIDIA-Linux-x86_64*.run",
       ]
 
   }
