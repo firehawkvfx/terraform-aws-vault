@@ -30,7 +30,7 @@ variable "install_auth_signing_script" {
 # "timestamp" template function replacement
 locals {
   timestamp = regex_replace(timestamp(), "[- TZ:]", "")
-  template_dir = template_dir()
+  template_dir = path.root
   }
 
 # source blocks are generated from your builders; a source can be referenced in
