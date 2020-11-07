@@ -199,7 +199,7 @@ EOFO
       "set -x; ls -ltriah /tmp/nvidia/; sudo chmod +x ${var.nvidia_driver}",
       "ls -ltriah /tmp/nvidia/", # Check exec permissions
       "sudo systemctl get-default", # should be multi-user.target # "sleep 5; sudo systemctl isolate multi-user.target",
-      "cd /tmp/nvidia; set -o pipefail; sudo /bin/bash ${var.nvidia_driver} -x -s -j 1 || /var/log/nvidia-installer.log; ls -ltriah", #extract
+      "cd /tmp/nvidia; set -o pipefail; sudo /bin/bash ${var.nvidia_driver} -x -s -j 1 || cat /var/log/nvidia-installer.log; ls -ltriah", #extract
       "folder=$(echo ${var.nvidia_driver} | cut -d '.' -f-3); ls -ltriah /tmp/nvidia/; ls -ltriah ${folder}/; sudo $folder/nvidia-installer --dkms -s --install-libglvnd", # log at /var/log/nvidia-installer.log
       "echo $folder",
       "sudo dracut -fv" # Not entirely sure this is necesary.
