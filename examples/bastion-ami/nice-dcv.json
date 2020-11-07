@@ -129,6 +129,13 @@
   },{
     "type": "shell",
     "inline": [
+      "sudo yum install -y gcc kernel-devel-$(uname -r)"
+    ],
+    "only": ["amazon-linux-2-ami","centos7-nicedcv-nvidia-ami"]
+  },{
+    "type": "shell",
+    "inline": [
+      "set -x",
       "sudo systemctl get-default",
       "sudo systemctl set-default graphical.target",
       "sudo systemctl isolate graphical.target",
