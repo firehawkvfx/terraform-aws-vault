@@ -145,20 +145,20 @@ build {
   #     ]
 
   # }
-  provisioner "shell" {
-    inline = [
-      "sudo yum groupinstall -y \"GNOME Desktop\" \"Development Tools\"",
-      "sudo yum -y install kernel-devel",
-      "sudo yum -y install epel-release",
-      "sudo yum -y install dkms",
-      "sudo yum upgrade -y",
-      "mkdir -p /tmp/nvidia/" # ensure dir exists
-      ]
-  }
-  provisioner "shell" {
-    expect_disconnect = true
-    inline            = ["sudo reboot"]
-  }
+  # provisioner "shell" {
+  #   inline = [
+  #     "sudo yum groupinstall -y \"GNOME Desktop\" \"Development Tools\"",
+  #     "sudo yum -y install kernel-devel",
+  #     "sudo yum -y install epel-release",
+  #     "sudo yum -y install dkms",
+  #     "sudo yum upgrade -y",
+  #     "mkdir -p /tmp/nvidia/" # ensure dir exists
+  #     ]
+  # }
+  # provisioner "shell" {
+  #   expect_disconnect = true
+  #   inline            = ["sudo reboot"]
+  # }
 
   provisioner "file" {
     destination = "${var.nvidia_driver}"
