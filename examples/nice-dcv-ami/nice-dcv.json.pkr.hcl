@@ -95,7 +95,10 @@ build {
   sources = ["source.amazon-ebs.centos7-nicedcv-nvidia-ami"]
 
   provisioner "shell" {
-    inline = ["mkdir -p /tmp/terraform-aws-vault/modules"]
+    inline = [
+      "mkdir -p /tmp/terraform-aws-vault/modules",
+      "mkdir -p /tmp/nvidia"
+      ]
   }
 
   #could not parse template for following block: "template: generated:3: function \"template_dir\" not defined"
@@ -192,8 +195,8 @@ EOFO
   }
   provisioner "shell" {
     inline = [
-      "set -x; sudo chmod +x ${var.nvidia_driver}",
-      "ls -ltriah /tmp", # Check exec permissions
+      "set -x; ls -ltriah /tmp/nvidia; sudo chmod +x ${var.nvidia_driver}",
+      "ls -ltriah /tmp/nvidia", # Check exec permissions
       # "sudo init 3", # Stop x server
       "systemctl isolate multi-user.target",
       "sudo /bin/sh ${var.nvidia_driver} --dkms -s --install-libglvnd",
