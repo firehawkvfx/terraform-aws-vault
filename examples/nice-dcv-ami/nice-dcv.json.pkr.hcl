@@ -192,7 +192,7 @@ EOFO
   }
   provisioner "shell" {
     expect_disconnect = true
-    inline            = ["sudo systemctl reboot"]
+    inline            = ["sudo reboot"]
   }
   provisioner "shell" {
     inline = [
@@ -208,7 +208,7 @@ EOFO
   }
   provisioner "shell" {
     expect_disconnect = true
-    inline            = ["sudo systemctl reboot"]
+    inline            = ["sudo reboot"]
   }
   provisioner "shell" {
     inline = [
@@ -220,8 +220,10 @@ EOFO
   }
   provisioner "shell" {
     expect_disconnect = true
-    inline            = ["sudo systemctl reboot"]
+    inline            = ["sudo reboot"]
   }
+
+# Ihis point could be snapshotted for a gpu instance to render.  Instead we continue to enable a graphical ui.
 
 # we seem to need to reboot because we produce these errors otherwise.
 # ==> amazon-ebs.centos7-nicedcv-nvidia-ami: + sudo systemctl isolate graphical.target
