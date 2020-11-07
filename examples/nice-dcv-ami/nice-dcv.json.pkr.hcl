@@ -200,7 +200,7 @@ EOFO
       "ls -ltriah /tmp/nvidia/", # Check exec permissions
       "sudo systemctl get-default", # should be multi-user.target # "sleep 5; sudo systemctl isolate multi-user.target",
       "cd /tmp; sudo /bin/sh ${var.nvidia_driver} -x; ls -ltriah", #extract
-      "folder=$(echo ${var.nvidia_driver} | cut -d '.' -f1); sudo $folder/nvidia-installer --dkms -s --install-libglvnd", # log at /var/log/nvidia-installer.log
+      "folder=$(echo ${var.nvidia_driver} | cut -d '.' -f-3); ls -ltriah $folder; sudo $folder/nvidia-installer --dkms -s --install-libglvnd", # log at /var/log/nvidia-installer.log
       "echo $folder",
       "sudo dracut -fv" # Not entirely sure this is necesary.
       ]
