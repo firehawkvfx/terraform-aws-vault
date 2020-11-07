@@ -73,6 +73,11 @@ source "amazon-ebs" "centos7-nicedcv-nvidia-ami" {
   region          = "${var.aws_region}"
   source_ami      = "${var.bastion_centos7_ami}"
   ssh_username    = "centos"
+  assume_role { # Since we need to read files from s3, we require a role with read access.
+      role_arn     = "arn:aws:iam::972620357255:role/S3-Admin-S3" # This needs to be replaced with a terraform output
+      session_name = "SESSION_NAME"
+      external_id  = "EXTERNAL_ID"
+  }
 }
 
 #could not parse template for following block: "template: generated:4: function \"clean_resource_name\" not defined"
