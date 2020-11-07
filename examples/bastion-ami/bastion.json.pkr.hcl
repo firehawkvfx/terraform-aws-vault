@@ -190,7 +190,10 @@ build {
 
   provisioner "shell" {
     inline = [
-      "sudo yum groupinstall -y \"GNOME Desktop\"",
+      "sudo yum groupinstall -y \"GNOME Desktop\" \"Development Tools\"",
+      "yum -y install kernel-devel",
+      "yum -y install epel-release",
+      "yum -y install dkms",
       "sudo yum upgrade -y"
       ]
     only   = ["amazon-ebs.centos7-ami"]

@@ -145,24 +145,20 @@ build {
   #     ]
 
   # }
-  # provisioner "shell" {
-  #   inline = [
-  #     "sudo yum groupinstall -y \"GNOME Desktop\"",
-  #     "sudo yum upgrade -y"
-  #     ]
+  provisioner "shell" {
+    inline = [
+      "sudo yum groupinstall -y \"GNOME Desktop\" \"Development Tools\"",
+      "yum -y install kernel-devel",
+      "yum -y install epel-release",
+      "yum -y install dkms",
+      "sudo yum upgrade -y"
+      ]
+  }
+  provisioner "shell" {
+    expect_disconnect = true
+    inline            = ["sudo reboot"]
+  }
 
-  # }
-  # provisioner "shell" {
-  #   expect_disconnect = true
-  #   inline            = ["sudo reboot"]
-  # }
-
-  # provisioner "shell-local" {
-  #   inline = [
-  #     "aws s3 cp --recursive s3://ec2-linux-nvidia-drivers/latest/ .",
-  #     "ls -ltriah"
-  #     ]
-  # }
   provisioner "file" {
     destination = "${var.nvidia_driver}"
     source      = "${var.nvidia_driver}"
@@ -180,11 +176,13 @@ blacklist nvidiafb
 blacklist rivatv
 EOF
 
-echo 'GRUB_CMDLINE_LINUX="rdblacklist=nouveau"' | sudo tee --append /etc/default/grub
+echo 'GRUB_CMDLINE_LINUX="rdblacklist=nouveau nouveau.modeset=0"' | sudo tee --append /etc/default/grub
 sudo cat /etc/default/grub
 EOFO
       ,
-      "sudo grub2-mkconfig -o /boot/grub2/grub.cfg"
+      "sudo grub2-mkconfig -o /boot/grub2/grub.cfg",
+      "mv /boot/initramfs-$(uname -r).img /boot/initramfs-$(uname -r)-nouveau.img", # backup old initramfs
+      "dracut -f /boot/initramfs-$(uname -r).img $(uname -r)"
       ]
   }
   provisioner "shell" {
@@ -195,8 +193,9 @@ EOFO
     inline = [
       "set -x; sudo chmod +x ${var.nvidia_driver}",
       "ls -ltriah /tmp", # Check exec permissions
-      "sudo init 3", # Stop x server
-      "sudo /bin/sh ${var.nvidia_driver} -s --install-libglvnd",
+      # "sudo init 3", # Stop x server
+      "systemctl isolate multi-user.target",
+      "sudo /bin/sh ${var.nvidia_driver} --dkms -s --install-libglvnd",
       # "sudo init 5" # resume x server
       ]
   }
