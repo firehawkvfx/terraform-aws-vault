@@ -195,7 +195,9 @@ EOFO
     inline = [
       "set -x; sudo chmod +x ${var.nvidia_driver}",
       "ls -ltriah /tmp", # Check exec permissions
-      "sudo /bin/sh ${var.nvidia_driver} -s"
+      "sudo init 3", # Stop x server
+      "sudo /bin/sh ${var.nvidia_driver} -s --install-libglvnd",
+      "sudo init 5" # resume x server
       ]
   }
   provisioner "shell" {
