@@ -165,7 +165,7 @@ build {
   # }
   provisioner "file" {
     destination = "/tmp/${var.nvidia_driver}"
-    source      = "/tmp/${var.nvidia_driver}"
+    source      = "${var.nvidia_driver}"
   }
 
   provisioner "shell" {
