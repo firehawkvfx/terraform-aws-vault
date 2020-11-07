@@ -170,6 +170,7 @@ build {
 
   provisioner "shell" {
     inline = [
+      "sudo yum groupinstall -y \"Graphical Administration Tools\"",
       "sudo yum install -y gcc kernel-devel-$(uname -r)",
       <<EOFO
 cat << EOF | sudo tee --append /etc/modprobe.d/blacklist.conf
@@ -213,7 +214,7 @@ EOFO
       "set -x",
       "nvidia-smi -q | head", # Confirm the driver is working.
       "sudo systemctl get-default",
-      "sudo yum groupinstall -y \"Graphical Administration Tools\"",
+      # "sudo yum groupinstall -y \"Graphical Administration Tools\"",
       "sudo systemctl enable graphical.target",
       "sudo systemctl start graphical.target",
       "sleep 5; sudo systemctl set-default graphical.target"
