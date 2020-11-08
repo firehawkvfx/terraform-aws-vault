@@ -22,4 +22,4 @@ export PKR_VAR_nvidia_driver=$(ls /tmp/nvidia/NVIDIA-Linux-x86_64-*-grid-aws.run
 
 export PKR_VAR_manifest_path="$SCRIPTDIR/manifest.json"
 rm -f $PKR_VAR_manifest_path
-packer build $SCRIPTDIR/nice-dcv.json.pkr.hcl 
+packer build $SCRIPTDIR/nice-dcv.json.pkr.hcl | ts '[%H:%M:%S]'
