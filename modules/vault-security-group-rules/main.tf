@@ -11,6 +11,10 @@ resource "aws_security_group_rule" "allow_api_inbound_from_cidr_blocks" {
   cidr_blocks = var.allowed_inbound_cidr_blocks
 
   security_group_id = var.security_group_id
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group_rule" "allow_api_inbound_from_security_group_ids" {
@@ -22,6 +26,10 @@ resource "aws_security_group_rule" "allow_api_inbound_from_security_group_ids" {
   source_security_group_id = element(var.allowed_inbound_security_group_ids, count.index)
 
   security_group_id = var.security_group_id
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group_rule" "allow_cluster_inbound_from_self" {
@@ -32,6 +40,10 @@ resource "aws_security_group_rule" "allow_cluster_inbound_from_self" {
   self      = true
 
   security_group_id = var.security_group_id
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group_rule" "allow_cluster_inbound_from_self_api" {
@@ -42,5 +54,9 @@ resource "aws_security_group_rule" "allow_cluster_inbound_from_self_api" {
   self      = true
 
   security_group_id = var.security_group_id
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
