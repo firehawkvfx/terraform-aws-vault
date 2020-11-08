@@ -107,7 +107,7 @@ build {
       "sudo yum groupinstall -y \"Development Tools\"",
       "sudo yum -y install kernel-devel",
       # "sudo yum -y install epel-release", # These (with dkms) could potentially be removed but make updating the NVIDIA driver easier.
-      # "sudo yum -y install dkms",
+      # "sudo yum -y install dkms", # dkms may be causing connection reliability issues.
       "sudo yum upgrade -y"
       ]
     # only   = ["amazon-ebs.centos7-ami"]
