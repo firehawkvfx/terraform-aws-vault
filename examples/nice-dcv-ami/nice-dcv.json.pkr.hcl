@@ -232,8 +232,9 @@ EOFO
     inline = [
       "folder=$(echo ${var.nvidia_driver} | cut -d '.' -f-3)",
       "ls -ltriah /tmp/nvidia/; ls -ltriah $folder/",
+      "echo 'Installing Nvidia driver...'",
       "sudo $folder/nvidia-installer --dkms -s --install-libglvnd -j 1 || cat /var/log/nvidia-installer.log",
-      "echo 'Installed Nvidia Driver'"
+      "echo '...Finished installing Nvidia driver'"
       # "sudo dracut -fv" # Not entirely sure this is necesary.
       ]
     timeout      = "300s"
