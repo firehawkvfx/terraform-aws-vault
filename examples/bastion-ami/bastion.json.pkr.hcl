@@ -170,7 +170,13 @@ build {
     only           = ["amazon-ebs.ubuntu16-ami", "amazon-ebs.ubuntu18-ami"]
   }
   provisioner "shell" {
-    inline         = ["sudo apt-get -y install python3.7", "sudo apt-get install -y python3-pip", "python3 -m pip install --upgrade pip", "python3 -m pip install boto3"]
+    inline         = [
+      # "sudo apt-get -y install python3.7",
+      "sudo apt-get install -y python3-pip",
+      "python3 -m pip install --upgrade pip",
+      "python3 -m pip install boto3",
+      "python3 -m pip --version"
+      ]
     inline_shebang = "/bin/bash -e"
     only           = ["amazon-ebs.ubuntu18-ami"]
   }
