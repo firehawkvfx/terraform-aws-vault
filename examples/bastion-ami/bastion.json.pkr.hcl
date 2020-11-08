@@ -172,7 +172,7 @@ build {
   provisioner "shell" {
     inline         = [
       # "sudo apt-get -y install python3.7",
-      "sudo apt-get install -y python3-pip",
+      "sudo apt install -y python3-pip",
       "python3 -m pip install --upgrade pip",
       "python3 -m pip install boto3",
       "python3 -m pip --version"
