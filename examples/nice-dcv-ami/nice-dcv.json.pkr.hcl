@@ -191,6 +191,7 @@ build {
   provisioner "file" {
     destination = "${var.nvidia_driver}"
     source      = "${var.nvidia_driver}"
+    max_retries = 3
   }
 
   provisioner "shell" {
@@ -226,7 +227,8 @@ EOFO
       "sudo systemctl get-default", # should be multi-user.target # "sleep 5; sudo systemctl isolate multi-user.target",
       "cd /tmp/nvidia; set -o pipefail; sudo /bin/bash ${var.nvidia_driver} -x -s -j 1 || cat /var/log/nvidia-installer.log; ls -ltriah" #extract
       ]
-    timeout      = "300s"
+    max_retries = 3
+    timeout      = "7m"
   }
   provisioner "shell" {
     inline = [
@@ -237,7 +239,8 @@ EOFO
       "echo '...Finished installing Nvidia driver'"
       # "sudo dracut -fv" # Not entirely sure this is necesary.
       ]
-    timeout      = "300s"
+    max_retries = 3
+    timeout      = "7m"
   }
   provisioner "shell" {
     expect_disconnect = true
