@@ -103,10 +103,11 @@ build {
 
   provisioner "shell" { # ITs possible that something installed here is slowing down shutdown of centos amis.
     inline = [
-      "sudo yum groupinstall -y \"GNOME Desktop\" \"Development Tools\"",
+      "sudo yum groupinstall -y \"GNOME Desktop\"",
+      "sudo yum groupinstall -y \"Development Tools\"",
       "sudo yum -y install kernel-devel",
-      "sudo yum -y install epel-release", # These (with dkms) could potentially be removed but make updating the NVIDIA driver easier.
-      "sudo yum -y install dkms",
+      # "sudo yum -y install epel-release", # These (with dkms) could potentially be removed but make updating the NVIDIA driver easier.
+      # "sudo yum -y install dkms",
       "sudo yum upgrade -y"
       ]
     # only   = ["amazon-ebs.centos7-ami"]
@@ -235,7 +236,7 @@ EOFO
       "folder=$(echo ${var.nvidia_driver} | cut -d '.' -f-3)",
       "ls -ltriah /tmp/nvidia/; ls -ltriah $folder/",
       "echo 'Installing Nvidia driver...'",
-      "sudo $folder/nvidia-installer --dkms -s --install-libglvnd -j 1 || cat /var/log/nvidia-installer.log",
+      "sudo $folder/nvidia-installer -s --install-libglvnd -j 1 || cat /var/log/nvidia-installer.log",
       "echo '...Finished installing Nvidia driver'"
       # "sudo dracut -fv" # Not entirely sure this is necesary.
       ]
