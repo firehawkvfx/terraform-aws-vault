@@ -36,6 +36,11 @@ variable "nvidia_driver" { # run aws s3 cp --recursive s3://ec2-linux-nvidia-dri
   default = null
 }
 
+variable "manifest_path" {
+  type = string
+  default = "manifest.json"
+}
+
 locals {
   timestamp    = regex_replace(timestamp(), "[- TZ:]", "")
   template_dir = path.root
@@ -287,7 +292,7 @@ EOFO
       ]
   }
   post-processor "manifest" {
-      output = "manifest.json"
+      output = "${local.template_dir}/manifest.json"
       strip_path = true
       custom_data = {
         timestamp = "${local.timestamp}"

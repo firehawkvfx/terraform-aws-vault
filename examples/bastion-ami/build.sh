@@ -9,5 +9,6 @@ export PKR_VAR_aws_region="$AWS_DEFAULT_REGION"
 export PACKER_LOG=1
 export PACKER_LOG_PATH="$SCRIPTDIR/packerlog.log"
 
-rm -f $SCRIPTDIR/manifest.json
+export PKR_VAR_manifest_path="$SCRIPTDIR/manifest.json"
+rm -f $PKR_VAR_manifest_path
 packer build $SCRIPTDIR/bastion.json.pkr.hcl 

@@ -170,7 +170,7 @@
   "post-processors": [
     {
       "type": "manifest",
-      "output": "manifest.json",
+      "output": "{{template_dir}}/manifest.json",
       "strip_path": "true",
       "custom_data": {
         "timestamp": "Use local.timestamp when converted to hcl"

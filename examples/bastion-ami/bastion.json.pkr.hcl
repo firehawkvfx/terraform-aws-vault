@@ -196,7 +196,7 @@ build {
   }
 
   post-processor "manifest" {
-      output = "manifest.json"
+      output = "${local.template_dir}/manifest.json"
       strip_path = true
       custom_data = {
         timestamp = "${local.timestamp}"
