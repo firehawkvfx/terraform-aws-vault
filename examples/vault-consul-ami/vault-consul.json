@@ -165,5 +165,16 @@
       "/tmp/terraform-aws-consul/modules/setup-systemd-resolved/setup-systemd-resolved"
     ],
     "pause_before": "30s"
-  }]
+  }
+  ],
+  "post-processors": [
+    {
+      "type": "manifest",
+      "output": "manifest.json",
+      "strip_path": "true",
+      "custom_data": {
+        "timestamp": "Use local.timestamp when converted to hcl"
+      }
+    }
+  ]
 }
