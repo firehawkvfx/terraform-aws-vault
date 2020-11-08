@@ -94,6 +94,26 @@ source "amazon-ebs" "centos7-nicedcv-nvidia-ami" {
 build {
   sources = ["source.amazon-ebs.centos7-nicedcv-nvidia-ami"]
 
+  ### This component could be relocated to a prio ami since it takes a long time.
+
+  provisioner "shell" { # ITs possible that something installed here is slowing down shutdown of centos amis.
+    inline = [
+      "sudo yum groupinstall -y \"GNOME Desktop\" \"Development Tools\"",
+      "sudo yum -y install kernel-devel",
+      "sudo yum -y install epel-release", # These (with dkms) could potentially be removed but make updating the NVIDIA driver easier.
+      "sudo yum -y install dkms",
+      "sudo yum upgrade -y"
+      ]
+    # only   = ["amazon-ebs.centos7-ami"]
+  }
+  provisioner "shell" {
+    expect_disconnect = true
+    inline            = ["sudo reboot"]
+    # only              = ["amazon-ebs.centos7-ami"]
+  }
+
+  ###
+
   provisioner "shell" {
     inline = [
       "mkdir -p /tmp/terraform-aws-vault/modules",

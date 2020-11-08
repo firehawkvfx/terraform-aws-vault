@@ -185,24 +185,6 @@ build {
       ]
     only   = ["amazon-ebs.amazon-linux-2-ami", "amazon-ebs.centos7-ami"]
   }
-  
-  # Gnome Desktop is installed on Centos AMI's to be ready for the Gnome UI if required.
-
-  provisioner "shell" {
-    inline = [
-      "sudo yum groupinstall -y \"GNOME Desktop\" \"Development Tools\"",
-      "sudo yum -y install kernel-devel",
-      "sudo yum -y install epel-release", # These (with dkms) could potentially be removed but make updating the NVIDIA driver easier.
-      "sudo yum -y install dkms",
-      "sudo yum upgrade -y"
-      ]
-    only   = ["amazon-ebs.centos7-ami"]
-  }
-  provisioner "shell" {
-    expect_disconnect = true
-    inline            = ["sudo reboot"]
-    only              = ["amazon-ebs.centos7-ami"]
-  }
 
   post-processor "manifest" {
       output = "manifest.json"
