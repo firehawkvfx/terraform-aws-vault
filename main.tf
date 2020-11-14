@@ -49,16 +49,11 @@ data "aws_ami" "vault_consul" {
   }
 }
 
-resource "random_pet" "env" {
-  length = 2
-}
-
 # ---------------------------------------------------------------------------------------------------------------------
 # DEPLOY THE VAULT SERVER CLUSTER
 # ---------------------------------------------------------------------------------------------------------------------
 data "aws_ssm_parameter" "vault_kms_unseal" {
   name = "vault_kms_unseal_key_id"
-  type = "SecureString"
 }
 
 data "aws_kms_key" "vault" {
