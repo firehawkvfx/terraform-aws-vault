@@ -175,33 +175,33 @@ module "security_group_rules" {
 # DEPLOY THE ELB
 # ---------------------------------------------------------------------------------------------------------------------
 
-module "vault_elb" {
-  # When using these modules in your own templates, you will need to use a Git URL with a ref attribute that pins you
-  # to a specific version of the modules, such as the following example:
-  # source = "github.com/hashicorp/terraform-aws-vault//modules/vault-elb?ref=v0.0.1"
-  source = "./modules/vault-elb"
+# module "vault_elb" {
+#   # When using these modules in your own templates, you will need to use a Git URL with a ref attribute that pins you
+#   # to a specific version of the modules, such as the following example:
+#   # source = "github.com/hashicorp/terraform-aws-vault//modules/vault-elb?ref=v0.0.1"
+#   source = "./modules/vault-elb"
 
-  name = var.vault_cluster_name
+#   name = var.vault_cluster_name
 
-  vpc_id     = data.aws_vpc.default.id
-  subnet_ids = data.aws_subnet_ids.default.ids
+#   vpc_id     = data.aws_vpc.default.id
+#   subnet_ids = data.aws_subnet_ids.default.ids
 
-  # Associate the ELB with the instances created by the Vault Autoscaling group
-  vault_asg_name = module.vault_cluster.asg_name
+#   # Associate the ELB with the instances created by the Vault Autoscaling group
+#   vault_asg_name = module.vault_cluster.asg_name
 
-  # To make testing easier, we allow requests from any IP address here but in a production deployment, we *strongly*
-  # recommend you limit this to the IP address ranges of known, trusted servers inside your VPC.
-  allowed_inbound_cidr_blocks = ["0.0.0.0/0"]
+#   # To make testing easier, we allow requests from any IP address here but in a production deployment, we *strongly*
+#   # recommend you limit this to the IP address ranges of known, trusted servers inside your VPC.
+#   allowed_inbound_cidr_blocks = ["0.0.0.0/0"]
 
-  # In order to access Vault over HTTPS, we need a domain name that matches the TLS cert
-  create_dns_entry = var.create_dns_entry
+#   # In order to access Vault over HTTPS, we need a domain name that matches the TLS cert
+#   create_dns_entry = var.create_dns_entry
 
-  # Terraform conditionals are not short-circuiting, so we use join as a workaround to avoid errors when the
-  # aws_route53_zone data source isn't actually set: https://github.com/hashicorp/hil/issues/50
-  hosted_zone_id = var.create_dns_entry ? join("", data.aws_route53_zone.selected.*.zone_id) : ""
+#   # Terraform conditionals are not short-circuiting, so we use join as a workaround to avoid errors when the
+#   # aws_route53_zone data source isn't actually set: https://github.com/hashicorp/hil/issues/50
+#   hosted_zone_id = var.create_dns_entry ? join("", data.aws_route53_zone.selected.*.zone_id) : ""
 
-  domain_name = var.vault_domain_name
-}
+#   domain_name = var.vault_domain_name
+# }
 
 # Look up the Route 53 Hosted Zone by domain name
 data "aws_route53_zone" "selected" {
