@@ -27,7 +27,7 @@ variable "install_auth_signing_script" {
 }
 
 locals {
-  timestamp    = regex_replace(timestamp(), "[- TZ:]", "")
+  timestamp    = formatdate("YYYY-MM-DD'T'hh:mm:ssZ", timestamp())
   template_dir = path.root
 }
 
@@ -39,7 +39,7 @@ locals {
 
 source "amazon-ebs" "amazon-linux-2-ami" {
   ami_description = "An Amazon Linux 2 AMI that will accept connections from hosts with TLS Certs."
-  ami_name        = "firehawk-base-amazon-linux-2-${local.timestamp}-{{uuid}}"
+  ami_name        = "firehawk-base-amazon-linux-2-${local.timestamp}-{{uuid}}" 
   instance_type   = "t2.micro"
   region          = "${var.aws_region}"
   source_ami_filter {

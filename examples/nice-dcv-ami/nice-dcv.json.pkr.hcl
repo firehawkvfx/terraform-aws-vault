@@ -47,7 +47,9 @@ locals {
 }
 
 # "timestamp" template function replacement
-locals { timestamp = regex_replace(timestamp(), "[- TZ:]", "") }
+locals {  
+  timestamp = formatdate("YYYY-MM-DD'T'hh:mm:ssZ", timestamp())
+}
 
 # source blocks are generated from your builders; a source can be referenced in
 # build blocks. A build block runs provisioner and post-processors on a
