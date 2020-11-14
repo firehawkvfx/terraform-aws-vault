@@ -39,7 +39,7 @@ variable "ami_id" {
 variable "enable_auto_unseal" {
   description = "If enabled, will generate and use a KMS key to auto unseal the vault.  WARNING: continuously destroying and creating a KMS key will cost 1$ each time"
   type        = string
-  default     = false
+  default     = true
 }
 
 variable "ssh_key_name" {
@@ -63,7 +63,7 @@ variable "s3_bucket_name" {
 variable "subnet_tags" {
   description = "Tags used to find subnets for vault and consul servers"
   type        = map(string)
-  default     = {}
+  default     = {"area":"private"}
 }
 
 variable "vpc_tags" {
@@ -75,7 +75,7 @@ variable "vpc_tags" {
 variable "use_default_vpc" {
   description = "Whether to use the default VPC - NOT recommended for production! - should more likely change this to false and use the vpc_tags to find your vpc"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "vault_cluster_name" {
