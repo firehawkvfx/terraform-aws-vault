@@ -89,6 +89,7 @@ resource "aws_autoscaling_group" "autoscaling_group" {
   # when you try to do a terraform destroy.
   lifecycle {
     create_before_destroy = true
+    ignore_changes = [load_balancers, target_group_arns]
   }
 }
 
