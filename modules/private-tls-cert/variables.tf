@@ -28,18 +28,18 @@ variable "owner" {
 }
 
 variable "organization_name" {
-  description = "The name of the organization to associate with the certificates (e.g. Acme Co)."
+  description = "The name of the organization to associate with the certificates (e.g. Firehawk VFX)."
   type        = string
 }
 
 variable "ca_common_name" {
-  description = "The common name to use in the subject of the CA certificate (e.g. acme.co cert)."
+  description = "The common name to use in the subject of the CA certificate (e.g. Firehawk VFX cert)."
   type        = string
   default     = "Firehawk CA Cert"
 }
 
 variable "common_name" {
-  description = "The common name to use in the subject of the certificate (e.g. acme.co cert)."
+  description = "The common name to use in the subject of the certificate (e.g. Firehawk VFX cert)."
   type        = string
   default     = "Firehawk Cert"
 }
@@ -57,7 +57,7 @@ variable "ip_addresses" {
 }
 
 variable "validity_period_hours" {
-  description = "The number of hours after initial issuing that the certificate will become invalid."
+  description = "The number of hours after initial issuing that the certificate will become invalid. (e.g. 8760)"
   type        = number
 }
 
