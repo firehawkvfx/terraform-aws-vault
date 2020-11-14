@@ -83,7 +83,7 @@ module "vault_cluster" {
   # This setting will create the AWS policy that allows the vault cluster to
   # access KMS and use this key for encryption and decryption
   enable_auto_unseal = var.enable_auto_unseal
-  auto_unseal_kms_key_arn = var.enable_auto_unseal ? element( concat( data.aws_kms_key.vault.arn, list("")), 0 ) : ""
+  auto_unseal_kms_key_arn = var.enable_auto_unseal ? data.aws_kms_key.vault.arn : ""
 
   enable_s3_backend = var.enable_s3_backend
   s3_bucket_name = var.s3_bucket_name
@@ -142,7 +142,7 @@ data "template_file" "user_data_vault_cluster" {
   vars = var.enable_auto_unseal ? { # provide different vars when unsealing
     consul_cluster_tag_key   = var.consul_cluster_tag_key
     consul_cluster_tag_value = var.consul_cluster_name
-    kms_key_id               = element( concat( data.aws_kms_key.vault.id, list("")), 0 )
+    kms_key_id               = data.aws_kms_key.vault.id
     aws_region               = data.aws_region.current.name
     s3_bucket_name           = var.s3_bucket_name
   } : {
