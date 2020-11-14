@@ -57,7 +57,7 @@ data "aws_ssm_parameter" "vault_kms_unseal" {
 }
 
 data "aws_kms_key" "vault" {
-  key_id = data.aws_ssm_parameter.vault_kms_unseal
+  key_id = data.aws_ssm_parameter.vault_kms_unseal.value
 }
 
 module "vault_cluster" {
