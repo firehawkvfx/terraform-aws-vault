@@ -153,7 +153,7 @@ build {
   }
   provisioner "shell" {
     inline = [
-      "if test -n \"\${var.vault_download_url}\"; then",
+      "if test -n '${var.vault_download_url}'; then",
       " /tmp/terraform-aws-vault/modules/install-vault/install-vault --download-url ${var.vault_download_url};",
       "else",
       " /tmp/terraform-aws-vault/modules/install-vault/install-vault --version ${var.vault_version};",
