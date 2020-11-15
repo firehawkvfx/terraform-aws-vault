@@ -54,8 +54,8 @@ variable "tls_public_key_path" {
 
 variable "vault_download_url" {
   type    = string
-  default = null
-  # default = "${var.VAULT_DOWNLOAD_URL}"
+  # default = null
+  default = ""
 }
 
 variable "vault_version" {
@@ -152,7 +152,13 @@ build {
     source      = "${local.template_dir}/../../modules/"
   }
   provisioner "shell" {
-    inline = ["if test -n \"${var.vault_download_url}\"; then", " /tmp/terraform-aws-vault/modules/install-vault/install-vault --download-url ${var.vault_download_url};", "else", " /tmp/terraform-aws-vault/modules/install-vault/install-vault --version ${var.vault_version};", "fi"]
+    inline = [
+      "if test -n \"\${var.vault_download_url}\"; then",
+      " /tmp/terraform-aws-vault/modules/install-vault/install-vault --download-url ${var.vault_download_url};",
+      "else",
+      " /tmp/terraform-aws-vault/modules/install-vault/install-vault --version ${var.vault_version};",
+      "fi"
+      ]
   }
 
   #could not parse template for following block: "template: generated:3: function \"template_dir\" not defined"
