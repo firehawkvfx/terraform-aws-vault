@@ -40,6 +40,15 @@ variable "install_auth_signing_script" {
   default = "true"
 }
 
+variable "tls_private_key_path" {
+  type    = string
+  default = "/home/ec2-user/.ssh/tls/vault.key.pem"
+}
+
+variable "tls_public_key_path" {
+  type    = string
+  default = "/home/ec2-user/.ssh/tls/vault.crt.pem"
+}
 
 variable "vault_download_url" {
   type    = string
@@ -105,14 +114,14 @@ build {
     destination = "/tmp/ca.crt.pem"
     source      = "${var.ca_public_key_path}"
   }
-  # provisioner "file" { # vault and consul servers only: clients dont need the private and public keys.
-  #   destination = "/tmp/vault.crt.pem"
-  #   source      = "${var.tls_public_key_path}"
-  # }
-  # provisioner "file" { # vault and consul servers only: clients dont need the private and public keys.
-  #   destination = "/tmp/vault.key.pem"
-  #   source      = "${var.tls_private_key_path}"
-  # }
+  provisioner "file" { # vault and consul servers only: clients may not need the private and public keys.
+    destination = "/tmp/vault.crt.pem"
+    source      = "${var.tls_public_key_path}"
+  }
+  provisioner "file" { # vault and consul servers only: clients may not need the private and public keys.
+    destination = "/tmp/vault.key.pem"
+    source      = "${var.tls_private_key_path}"
+  }
   provisioner "shell" {
     inline         = [
       "if [[ '${var.install_auth_signing_script}' == 'true' ]]; then",
@@ -121,8 +130,8 @@ build {
       "sudo rm /tmp/sign-request.py",
       "fi",
       "sudo mv /tmp/ca.crt.pem /opt/vault/tls/",
-      # "sudo mv /tmp/vault.crt.pem /opt/vault/tls/", # vault and consul servers only: clients dont need the private and public keys.
-      # "sudo mv /tmp/vault.key.pem /opt/vault/tls/", # vault and consul servers only: clients dont need the private and public keys.
+      "sudo mv /tmp/vault.crt.pem /opt/vault/tls/", # vault and consul servers only: clients dont need the private and public keys.
+      "sudo mv /tmp/vault.key.pem /opt/vault/tls/", # vault and consul servers only: clients dont need the private and public keys.
       "sudo chown -R vault:vault /opt/vault/tls/",
       "sudo chmod -R 600 /opt/vault/tls",
       "sudo chmod 700 /opt/vault/tls",
@@ -130,7 +139,8 @@ build {
     inline_shebang = "/bin/bash -e"
   }
   provisioner "shell" {
-    inline         = ["sudo apt-get install -y git",
+    inline         = [
+      "sudo apt-get install -y git",
       "if [[ '${var.install_auth_signing_script}' == 'true' ]]; then",
       "sudo apt-get install -y python-pip",
       "LC_ALL=C && sudo pip install boto3",
@@ -186,18 +196,11 @@ build {
 
   provisioner "shell" { 
     inline = [
-      # "echo 'sudo dcv create-session --owner ec2-user --user ec2-user my-session' >> /var/lib/cloud/scripts/per-boot/dcv_session.sh",
-      # "sudo chmod +rx /var/lib/cloud/scripts/per-boot/dcv_session.sh",
       "sudo mv /tmp/dcv_session.sh /var/lib/cloud/scripts/per-boot/",
       "sudo /var/lib/cloud/scripts/per-boot/dcv_session.sh", # This just tests the script.
       "dcv list-sessions" # A session should be listed here.
     ]
   }
-
-  # provisioner "shell" {
-  #   expect_disconnect = true
-  #   inline            = ["sudo reboot"]
-  # }
 
   post-processor "manifest" {
       output = "${local.template_dir}/manifest.json"
