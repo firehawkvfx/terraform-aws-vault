@@ -163,8 +163,8 @@ build {
 
   provisioner "shell" { # Ensure the NICE DCV session starts automatically on boot.
     inline = [
-      "sudo sed -i \"s/#create-session =.*/create-session = true/g\" /etc/dcv/dcv.conf"
-      "sudo sed -i \"s/#owner =.*/owner = 'ec2-user'/g\" /etc/dcv/dcv.conf",
+      "sudo sed -i \"s/#create-session =.*/create-session = true/g\" /etc/dcv/dcv.conf",
+      "sudo sed -i \"s/#owner =.*/owner = 'ec2-user'/g\" /etc/dcv/dcv.conf"
     ]
   }
 
