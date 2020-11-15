@@ -66,19 +66,24 @@ build {
   sources = ["source.amazon-ebs.amazonlinux2-nicedcv-nvidia-ami"]
 
   provisioner "shell" {
-    inline = [
-      "mkdir -p /tmp/terraform-aws-vault/modules",
-      "mkdir -p /tmp/nvidia"
-      ]
+    inline = ["mkdir -p /tmp/terraform-aws-vault/modules"]
   }
 
-  #could not parse template for following block: "template: generated:3: function \"template_dir\" not defined"
   provisioner "file" {
     destination = "/tmp/terraform-aws-vault/modules"
     source      = "${local.template_dir}/../../modules/"
   }
 
-  #could not parse template for following block: "template: generated:3: function \"template_dir\" not defined"
+  provisioner "shell" { # Vault client probably wont be install on bastions in future, but most hosts that will authenticate will require it.
+    inline = [
+      "if test -n '${var.vault_download_url}'; then",
+      " /tmp/terraform-aws-vault/modules/install-vault/install-vault --download-url ${var.vault_download_url};",
+      "else",
+      " /tmp/terraform-aws-vault/modules/install-vault/install-vault --version ${var.vault_version};",
+      "fi"
+      ]
+  }
+
   provisioner "file" {
     destination = "/tmp/sign-request.py"
     source      = "${local.template_dir}/auth/sign-request.py"
@@ -87,8 +92,64 @@ build {
     destination = "/tmp/ca.crt.pem"
     source      = "${var.ca_public_key_path}"
   }
-
-
+  # provisioner "file" { # vault and consul servers only: clients dont need the private and public keys.
+  #   destination = "/tmp/vault.crt.pem"
+  #   source      = "${var.tls_public_key_path}"
+  # }
+  # provisioner "file" { # vault and consul servers only: clients dont need the private and public keys.
+  #   destination = "/tmp/vault.key.pem"
+  #   source      = "${var.tls_private_key_path}"
+  # }
+  provisioner "shell" {
+    inline         = [
+      "if [[ '${var.install_auth_signing_script}' == 'true' ]]; then",
+      "sudo mv /tmp/sign-request.py /opt/vault/scripts/",
+      "else",
+      "sudo rm /tmp/sign-request.py",
+      "fi",
+      "sudo mv /tmp/ca.crt.pem /opt/vault/tls/",
+      # "sudo mv /tmp/vault.crt.pem /opt/vault/tls/", # vault and consul servers only: clients dont need the private and public keys.
+      # "sudo mv /tmp/vault.key.pem /opt/vault/tls/", # vault and consul servers only: clients dont need the private and public keys.
+      "sudo chown -R vault:vault /opt/vault/tls/",
+      "sudo chmod -R 600 /opt/vault/tls",
+      "sudo chmod 700 /opt/vault/tls",
+      "sudo /tmp/terraform-aws-vault/modules/update-certificate-store/update-certificate-store --cert-file-path /opt/vault/tls/ca.crt.pem"]
+    inline_shebang = "/bin/bash -e"
+  }
+  provisioner "shell" {
+    inline         = ["sudo apt-get install -y git",
+      "if [[ '${var.install_auth_signing_script}' == 'true' ]]; then",
+      "sudo apt-get install -y python-pip",
+      "LC_ALL=C && sudo pip install boto3",
+      "fi"]
+    inline_shebang = "/bin/bash -e"
+    only           = ["amazon-ebs.ubuntu16-ami", "amazon-ebs.ubuntu18-ami"]
+  }
+  provisioner "shell" {
+    inline = ["sudo yum install -y git",
+      "if [[ '${var.install_auth_signing_script}' == 'true' ]]; then",
+      "sudo yum install -y python2-pip",
+      "LC_ALL=C && sudo pip install boto3",
+      "fi"]
+    only   = ["amazon-ebs.amazonlinux2-nicedcv-nvidia-ami"]
+  }
+  provisioner "shell" {
+    inline = [
+      "git clone --branch ${var.consul_module_version} https://github.com/hashicorp/terraform-aws-consul.git /tmp/terraform-aws-consul",
+      "if test -n \"${var.consul_download_url}\"; then",
+      " /tmp/terraform-aws-consul/modules/install-consul/install-consul --download-url ${var.consul_download_url};",
+      "else",
+      " /tmp/terraform-aws-consul/modules/install-consul/install-consul --version ${var.consul_version};",
+      "fi"]
+  }
+  provisioner "shell" {
+    inline = ["/tmp/terraform-aws-consul/modules/install-dnsmasq/install-dnsmasq"]
+    only   = ["amazon-ebs.ubuntu16-ami", "amazon-ebs.amazonlinux2-nicedcv-nvidia-ami"]
+  }
+  provisioner "shell" {
+    inline = ["/tmp/terraform-aws-consul/modules/setup-systemd-resolved/setup-systemd-resolved"]
+    only   = ["amazon-ebs.ubuntu18-ami"]
+  }
 
   provisioner "shell" {
     expect_disconnect = true
