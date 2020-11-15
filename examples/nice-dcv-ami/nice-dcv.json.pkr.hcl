@@ -168,6 +168,15 @@ build {
     ]
   }
 
+  provisioner "shell" { # Install Firefox for Vault UI
+    inline = [
+      "wget -O ~/FirefoxSetup.tar.bz2 \"https://download.mozilla.org/?product=firefox-latest&os=linux64\"",
+      "sudo tar xjf ~/FirefoxSetup.tar.bz2 -C /opt/",
+      "sudo ln -s /opt/firefox/firefox /usr/bin/firefox"
+    ]
+  }
+  
+
   provisioner "shell" {
     expect_disconnect = true
     inline            = ["sudo reboot"]
