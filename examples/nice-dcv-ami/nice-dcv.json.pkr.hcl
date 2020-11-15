@@ -58,7 +58,7 @@ locals {
 
 
 source "amazon-ebs" "amazonlinux2-nicedcv-nvidia-ami" {
-  ami_description = "A Remote Workstation NICE DCV NVIDIA Cent OS 7 AMI that will accept connections from hosts with TLS Certs."
+  ami_description = "A Remote Workstation NICE DCV NVIDIA Amazon Linux 2 AMI that will accept connections from hosts with TLS Certs."
   ami_name        = "firehawk-amazonlinux2-nicedcv-nvidia-ami-${local.timestamp}-{{uuid}}"
   # instance_type   = "g3s.xlarge" # Only required if testing a gpu.
   instance_type   = "t2.micro"
@@ -164,24 +164,25 @@ build {
     only   = ["amazon-ebs.ubuntu18-ami"]
   }
 
-  # provisioner "shell" { # Ensure the NICE DCV session starts automatically on boot.
+  # provisioner "shell" { # Ensure the NICE DCV console session starts automatically on boot. This seems to only work with GPU instance types.
   #   inline = [
   #     "sudo sed -i \"s/#create-session =.*/create-session = true/g\" /etc/dcv/dcv.conf",
   #     "sudo sed -i \"s/#owner =.*/owner = 'ec2-user'/g\" /etc/dcv/dcv.conf"
   #   ]
   # }
 
-  provisioner "file" { # Start a virtual session on each boot.
-    destination = "/var/lib/cloud/scripts/per-boot/dcv_session.sh"
+  provisioner "file" { # Start a virtual session on each boot.  Do not combine this with the console session above.  Pick one.
+    destination = "/tmp/dcv_session.sh"
     source      = "${local.template_dir}/dcv_session.sh"
   }
 
-  provisioner "shell" { # This just tests the script.
+  provisioner "shell" { 
     inline = [
       # "echo 'sudo dcv create-session --owner ec2-user --user ec2-user my-session' >> /var/lib/cloud/scripts/per-boot/dcv_session.sh",
       # "sudo chmod +rx /var/lib/cloud/scripts/per-boot/dcv_session.sh",
-      "sudo /var/lib/cloud/scripts/per-boot/dcv_session.sh",
-      "dcv list-sessions"
+      "sudo mv /tmp/dcv_session.sh /var/lib/cloud/scripts/per-boot/",
+      "sudo /var/lib/cloud/scripts/per-boot/dcv_session.sh", # This just tests the script.
+      "dcv list-sessions" # A session should be listed here.
     ]
   }
   
