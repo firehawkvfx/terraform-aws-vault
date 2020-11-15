@@ -10,4 +10,4 @@ export PACKER_LOG=1
 export PACKER_LOG_PATH="$SCRIPTDIR/packerlog.log"
 
 rm -f $SCRIPTDIR/manifest.json
-packer build $SCRIPTDIR/vault-consul.json | ts '[%H:%M:%S]'
+packer build $SCRIPTDIR/vault-consul.json.pkr.hcl | ts '[%H:%M:%S]'
