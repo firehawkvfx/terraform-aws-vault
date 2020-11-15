@@ -84,12 +84,6 @@ variable "vault_cluster_name" {
   default     = "vault-example"
 }
 
-variable "consul_cluster_name" {
-  description = "What to name the Consul server cluster and all of its associated resources"
-  type        = string
-  default     = "consul-example"
-}
-
 variable "vault_cluster_size" {
   description = "The number of Vault server nodes to deploy. We strongly recommend using 3 or 5."
   type        = number
@@ -112,6 +106,12 @@ variable "consul_instance_type" {
   description = "The type of EC2 Instance to run in the Consul ASG"
   type        = string
   default     = "t2.nano"
+}
+
+variable "consul_cluster_name" {
+  description = "What to name the Consul server cluster and all of its associated resources"
+  type        = string
+  default     = "consul-example"
 }
 
 variable "consul_cluster_tag_key" {
