@@ -84,7 +84,9 @@ build {
     source      = "${local.template_dir}/../../modules/"
   }
 
-  provisioner "shell" { # Vault client probably wont be install on bastions in future, but most hosts that will authenticate will require it.
+  ### This block will install Consul and Vault Agent
+
+  provisioner "shell" { # Vault client probably wont be installed on bastions in future, but most hosts that will authenticate will require it.
     inline = [
       "if test -n '${var.vault_download_url}'; then",
       " /tmp/terraform-aws-vault/modules/install-vault/install-vault --download-url ${var.vault_download_url};",
@@ -168,15 +170,21 @@ build {
   #   ]
   # }
 
-  provisioner "shell" { # Start a virtual session on each boot
+  provisioner "file" { # Start a virtual session on each boot.
+    destination = "/var/lib/cloud/scripts/per-boot/dcv_session.sh"
+    source      = "${local.template_dir}/dcv_session.sh"
+  }
+
+  provisioner "shell" { # This just tests the script.
     inline = [
-      "echo 'sudo dcv create-session --owner ec2-user --user ec2-user my-session' >> /var/lib/cloud/scripts/per-boot/dcv_session.sh",
-      "sudo chmod +x /var/lib/cloud/scripts/per-boot/dcv_session.sh",
-      "/var/lib/cloud/scripts/per-boot/dcv_session.sh",
+      # "echo 'sudo dcv create-session --owner ec2-user --user ec2-user my-session' >> /var/lib/cloud/scripts/per-boot/dcv_session.sh",
+      # "sudo chmod +rx /var/lib/cloud/scripts/per-boot/dcv_session.sh",
+      "sudo /var/lib/cloud/scripts/per-boot/dcv_session.sh",
       "dcv list-sessions"
     ]
   }
   
+
 
   provisioner "shell" { # Install Firefox for Vault UI
     inline = [

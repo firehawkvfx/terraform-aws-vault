@@ -7,11 +7,11 @@ SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )" # 
 export AWS_DEFAULT_REGION=$(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone | sed 's/\(.*\)[a-z]/\1/')
 
 # Packer Vars
-export PKR_VAR_aws_region="$AWS_DEFAULT_REGION"
-if [[ -f "$SCRIPTDIR/../bastion-ami/manifest.json" ]]; then
-    export PKR_VAR_bastion_centos7_ami="$(jq -r '.builds[] | select(.name == "centos7-ami") | .artifact_id' $SCRIPTDIR/../bastion-ami/manifest.json | tail -1 | cut -d ":" -f2)"
-    echo "Found bastion_centos7_ami in manifest: PKR_VAR_bastion_centos7_ami=$PKR_VAR_bastion_centos7_ami"
-fi
+# export PKR_VAR_aws_region="$AWS_DEFAULT_REGION"
+# if [[ -f "$SCRIPTDIR/../bastion-ami/manifest.json" ]]; then
+#     export PKR_VAR_bastion_centos7_ami="$(jq -r '.builds[] | select(.name == "centos7-ami") | .artifact_id' $SCRIPTDIR/../bastion-ami/manifest.json | tail -1 | cut -d ":" -f2)"
+#     echo "Found bastion_centos7_ami in manifest: PKR_VAR_bastion_centos7_ami=$PKR_VAR_bastion_centos7_ami"
+# fi
 
 export PACKER_LOG=1
 export PACKER_LOG_PATH="$SCRIPTDIR/packerlog.log"
