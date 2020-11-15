@@ -172,6 +172,8 @@ build {
     inline = [
       "echo 'sudo dcv create-session --owner ec2-user --user ec2-user my-session' >> /var/lib/cloud/scripts/per-boot/dcv_session.sh",
       "sudo chmod +x /var/lib/cloud/scripts/per-boot/dcv_session.sh",
+      "/var/lib/cloud/scripts/per-boot/dcv_session.sh",
+      "dcv list-sessions"
     ]
   }
   
