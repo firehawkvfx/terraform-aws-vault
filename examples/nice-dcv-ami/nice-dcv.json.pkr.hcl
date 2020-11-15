@@ -161,6 +161,13 @@ build {
     only   = ["amazon-ebs.ubuntu18-ami"]
   }
 
+  provisioner "shell" { # Ensure the NICE DCV session starts automatically on boot.
+    inline = [
+      "sudo sed -i \"s/#create-session =.*/create-session = true/g\" /etc/dcv/dcv.conf"
+      "sudo sed -i \"s/#owner =.*/owner = 'ec2-user'/g\" /etc/dcv/dcv.conf",
+    ]
+  }
+
   provisioner "shell" {
     expect_disconnect = true
     inline            = ["sudo reboot"]
