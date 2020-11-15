@@ -132,7 +132,6 @@ build {
     inline = ["mkdir -p /tmp/terraform-aws-vault/modules"]
   }
 
-  #could not parse template for following block: "template: generated:3: function \"template_dir\" not defined"
   provisioner "file" {
     destination = "/tmp/terraform-aws-vault/modules"
     source      = "${local.template_dir}/../../modules/"
@@ -147,7 +146,6 @@ build {
       ]
   }
 
-  #could not parse template for following block: "template: generated:3: function \"template_dir\" not defined"
   provisioner "file" {
     destination = "/tmp/sign-request.py"
     source      = "${local.template_dir}/auth/sign-request.py"
