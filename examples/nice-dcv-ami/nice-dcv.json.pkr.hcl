@@ -60,7 +60,8 @@ locals {
 source "amazon-ebs" "amazonlinux2-nicedcv-nvidia-ami" {
   ami_description = "A Remote Workstation NICE DCV NVIDIA Cent OS 7 AMI that will accept connections from hosts with TLS Certs."
   ami_name        = "firehawk-amazonlinux2-nicedcv-nvidia-ami-${local.timestamp}-{{uuid}}"
-  instance_type   = "g3s.xlarge"
+  # instance_type   = "g3s.xlarge" # Only required if testing a gpu.
+  instance_type   = "t2.micro"
   region          = "${var.aws_region}"
   source_ami_filter {
     filters = {
