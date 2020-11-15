@@ -164,6 +164,14 @@ build {
     only   = ["amazon-ebs.ubuntu18-ami"]
   }
 
+  provisioner "shell" { # Install Firefox for Vault UI
+    inline = [
+      "wget -O ~/FirefoxSetup.tar.bz2 \"https://download.mozilla.org/?product=firefox-latest&os=linux64\"",
+      "sudo tar xvjf ~/FirefoxSetup.tar.bz2 -C /opt/",
+      "sudo ln -s /opt/firefox/firefox /usr/bin/firefox"
+    ]
+  }
+
   # provisioner "shell" { # Ensure the NICE DCV console session starts automatically on boot. This seems to only work with GPU instance types.
   #   inline = [
   #     "sudo sed -i \"s/#create-session =.*/create-session = true/g\" /etc/dcv/dcv.conf",
@@ -185,22 +193,11 @@ build {
       "dcv list-sessions" # A session should be listed here.
     ]
   }
-  
 
-
-  provisioner "shell" { # Install Firefox for Vault UI
-    inline = [
-      "wget -O ~/FirefoxSetup.tar.bz2 \"https://download.mozilla.org/?product=firefox-latest&os=linux64\"",
-      "sudo tar xjf ~/FirefoxSetup.tar.bz2 -C /opt/",
-      "sudo ln -s /opt/firefox/firefox /usr/bin/firefox"
-    ]
-  }
-  
-
-  provisioner "shell" {
-    expect_disconnect = true
-    inline            = ["sudo reboot"]
-  }
+  # provisioner "shell" {
+  #   expect_disconnect = true
+  #   inline            = ["sudo reboot"]
+  # }
 
   post-processor "manifest" {
       output = "${local.template_dir}/manifest.json"
