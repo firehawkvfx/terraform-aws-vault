@@ -179,6 +179,7 @@ build {
       "wget -O ~/FirefoxSetup.tar.bz2 \"https://download.mozilla.org/?product=firefox-latest&os=linux64\"",
       "sudo tar xvjf ~/FirefoxSetup.tar.bz2 -C /opt/",
       "sudo ln -s /opt/firefox/firefox /usr/bin/firefox"
+      # "sudo ln -s /opt/firefox/firefox /home/ec2-user/Desktop"
     ]
   }
 
