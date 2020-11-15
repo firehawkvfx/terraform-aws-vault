@@ -161,12 +161,20 @@ build {
     only   = ["amazon-ebs.ubuntu18-ami"]
   }
 
-  provisioner "shell" { # Ensure the NICE DCV session starts automatically on boot.
+  # provisioner "shell" { # Ensure the NICE DCV session starts automatically on boot.
+  #   inline = [
+  #     "sudo sed -i \"s/#create-session =.*/create-session = true/g\" /etc/dcv/dcv.conf",
+  #     "sudo sed -i \"s/#owner =.*/owner = 'ec2-user'/g\" /etc/dcv/dcv.conf"
+  #   ]
+  # }
+
+  provisioner "shell" { # Start a virtual session on each boot
     inline = [
-      "sudo sed -i \"s/#create-session =.*/create-session = true/g\" /etc/dcv/dcv.conf",
-      "sudo sed -i \"s/#owner =.*/owner = 'ec2-user'/g\" /etc/dcv/dcv.conf"
+      "echo 'sudo dcv create-session --owner ec2-user --user ec2-user my-session' >> /var/lib/cloud/scripts/per-boot/dcv_session.sh",
+      "sudo chmod +x /var/lib/cloud/scripts/per-boot/dcv_session.sh",
     ]
   }
+  
 
   provisioner "shell" { # Install Firefox for Vault UI
     inline = [
