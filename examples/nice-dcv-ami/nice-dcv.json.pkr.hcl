@@ -59,6 +59,7 @@ source "amazon-ebs" "amazonlinux2-nicedcv-nvidia-ami" {
     most_recent = true
     owners      = ["877902723034"]
   }
+  ssh_username    = "ec2-user"
 }
 
 build {
