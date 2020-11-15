@@ -187,7 +187,7 @@ build {
       "LC_ALL=C && sudo pip install boto3",
       "fi"]
     inline_shebang = "/bin/bash -e"
-    only           = ["ubuntu16-ami", "ubuntu18-ami"]
+    only           = ["amazon-ebs.ubuntu16-ami", "amazon-ebs.ubuntu18-ami"]
   }
   provisioner "shell" {
     inline = ["sudo yum install -y git",
@@ -195,7 +195,7 @@ build {
       "sudo yum install -y python2-pip",
       "LC_ALL=C && sudo pip install boto3",
       "fi"]
-    only   = ["amazon-linux-2-ami"]
+    only   = ["amazon-ebs.amazon-linux-2-ami"]
   }
   provisioner "shell" {
     inline = [
@@ -208,11 +208,11 @@ build {
   }
   provisioner "shell" {
     inline = ["/tmp/terraform-aws-consul/modules/install-dnsmasq/install-dnsmasq"]
-    only   = ["ubuntu16-ami", "amazon-linux-2-ami"]
+    only   = ["amazon-ebs.ubuntu16-ami", "amazon-ebs.amazon-linux-2-ami"]
   }
   provisioner "shell" {
     inline = ["/tmp/terraform-aws-consul/modules/setup-systemd-resolved/setup-systemd-resolved"]
-    only   = ["ubuntu18-ami"]
+    only   = ["amazon-ebs.ubuntu18-ami"]
   }
 
   #could not parse template for following block: "template: generated:5: function \"template_dir\" not defined"
