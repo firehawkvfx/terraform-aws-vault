@@ -68,12 +68,6 @@ locals {
   template_dir = path.root
 }
 
-# source blocks are generated from your builders; a source can be referenced in
-# build blocks. A build block runs provisioner and post-processors on a
-# source. Read the documentation for source blocks here:
-# https://www.packer.io/docs/from-1.5/blocks/source
-#could not parse template for following block: "template: generated:4: function \"clean_resource_name\" not defined"
-
 source "amazon-ebs" "amazon-linux-2-ami" {
   ami_description = "An Amazon Linux 2 AMI that has Vault ${var.vault_version} and Consul ${var.consul_version} installed."
   ami_name        = "vault-consul-amazon-linux-2-${local.timestamp}-{{uuid}}"
@@ -92,8 +86,6 @@ source "amazon-ebs" "amazon-linux-2-ami" {
   }
   ssh_username = "ec2-user"
 }
-
-#could not parse template for following block: "template: generated:4: function \"clean_resource_name\" not defined"
 
 source "amazon-ebs" "ubuntu16-ami" {
   ami_description = "An Ubuntu 16.04 AMI that has Vault ${var.vault_version} and Consul ${var.consul_version} installed."
@@ -114,8 +106,6 @@ source "amazon-ebs" "ubuntu16-ami" {
   ssh_username = "ubuntu"
 }
 
-#could not parse template for following block: "template: generated:4: function \"clean_resource_name\" not defined"
-
 source "amazon-ebs" "ubuntu18-ami" {
   ami_description = "An Ubuntu 18.04 AMI that has Vault ${var.vault_version} and Consul ${var.consul_version} installed."
   ami_name        = "vault-consul-ubuntu18-${local.timestamp}-{{uuid}}"
@@ -135,13 +125,8 @@ source "amazon-ebs" "ubuntu18-ami" {
   ssh_username = "ubuntu"
 }
 
-# a build block invokes sources and runs provisioning steps on them. The
-# documentation for build blocks can be found here:
-# https://www.packer.io/docs/from-1.5/blocks/build
 build {
-  sources = ["source.amazon-ebs.amazon-linux-2-ami",
-      "source.amazon-ebs.ubuntu16-ami",
-      "source.amazon-ebs.ubuntu18-ami"]
+  sources = ["source.amazon-ebs.amazon-linux-2-ami", "source.amazon-ebs.ubuntu16-ami", "source.amazon-ebs.ubuntu18-ami"]
 
   provisioner "shell" {
     inline = ["mkdir -p /tmp/terraform-aws-vault/modules"]
