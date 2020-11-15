@@ -13,7 +13,6 @@
 # https://www.packer.io/docs/from-1.5/variables#type-constraints for more info.
 variable "aws_region" {
   type    = string
-  # default = "${var.AWS_DEFAULT_REGION}"
 }
 
 variable "ca_public_key_path" {
@@ -23,7 +22,6 @@ variable "ca_public_key_path" {
 
 variable "consul_download_url" {
   type    = string
-  # default = "${var.CONSUL_DOWNLOAD_URL}"
   default = ""
 }
 
@@ -62,7 +60,6 @@ variable "vault_version" {
   default = "1.5.5"
 }
 
-# "timestamp" template function replacement
 locals { 
   timestamp = regex_replace(timestamp(), "[- TZ:]", "")
   template_dir = path.root

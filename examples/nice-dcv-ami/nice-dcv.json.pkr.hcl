@@ -13,7 +13,6 @@
 # https://www.packer.io/docs/from-1.5/variables#type-constraints for more info.
 variable "aws_region" {
   type = string
-  # default = null
 }
 
 variable "ca_public_key_path" {
@@ -21,24 +20,35 @@ variable "ca_public_key_path" {
   default = "/home/ec2-user/.ssh/tls/ca.crt.pem"
 }
 
+variable "consul_download_url" {
+  type    = string
+  default = ""
+}
+
+variable "consul_module_version" {
+  type    = string
+  default = "v0.8.0"
+}
+
+variable "consul_version" {
+  type    = string
+  default = "1.8.4"
+}
+
 variable "install_auth_signing_script" {
   type    = string
   default = "true"
 }
 
-variable "bastion_centos7_ami" {
+
+variable "vault_download_url" {
   type    = string
-  default = null
+  default = ""
 }
 
-variable "nvidia_driver" { # run aws s3 cp --recursive s3://ec2-linux-nvidia-drivers/latest/ . # to pull latest nvidia driver, then provide the file name as this var
-  type = string
-  default = null
-}
-
-variable "manifest_path" {
-  type = string
-  default = "manifest.json"
+variable "vault_version" {
+  type    = string
+  default = "1.5.5"
 }
 
 locals {
