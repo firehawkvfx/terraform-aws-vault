@@ -47,7 +47,7 @@ variable "common_name" {
 variable "dns_names" {
   description = "List of DNS names for which the certificate will be valid (e.g. vault.service.consul, foo.example.com)."
   type        = list(string)
-  default     = ["vault.service.consul", "firehawkvfx.com"]
+  default     = ["vault.service.consul"]
 }
 
 variable "ip_addresses" {
