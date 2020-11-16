@@ -319,7 +319,7 @@ EOF
 $consul_storage_type "consul" {
   address = "127.0.0.1:8500"
   path    = "vault/"
-  scheme  = "http"
+  scheme  = "https"
   service = "vault"
 }
 # HA settings
@@ -329,7 +329,7 @@ api_addr      = "$api_addr"
 service_registration "consul" {
   address = "127.0.0.1:8500"
   service = "vault"
-  scheme  = "http"
+  scheme  = "https"
 }
 EOF
 )
