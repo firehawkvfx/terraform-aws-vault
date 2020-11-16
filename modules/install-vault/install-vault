@@ -118,7 +118,8 @@ function install_dependencies {
   log_info "Installing dependencies"
 
   if $(has_apt_get); then
-    sudo apt-get update -y
+    sudo DEBIAN_FRONTEND=noninteractive apt-get update -y
+    sudo DEBIAN_FRONTEND=noninteractive apt-get update -y
     sudo DEBIAN_FRONTEND=noninteractive apt-get install -y awscli curl unzip jq libcap2-bin
   elif $(has_yum); then
     sudo yum update -y
