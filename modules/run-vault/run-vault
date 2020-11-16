@@ -320,6 +320,8 @@ $consul_storage_type "consul" {
   address = "127.0.0.1:8500"
   path    = "vault/"
   scheme  = "https"
+  tls_cert_file   = "$tls_cert_file"
+  tls_key_file    = "$tls_key_file"
   service = "vault"
 }
 # HA settings
@@ -330,6 +332,8 @@ service_registration "consul" {
   address = "127.0.0.1:8500"
   service = "vault"
   scheme  = "https"
+  tls_cert_file   = "$tls_cert_file"
+  tls_key_file    = "$tls_key_file"
 }
 EOF
 )
