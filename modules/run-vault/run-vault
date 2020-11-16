@@ -327,7 +327,9 @@ cluster_addr  = "https://$instance_ip_address:$cluster_port"
 api_addr      = "$api_addr"
 
 service_registration "consul" {
-  address      = "127.0.0.1:8500"
+  address = "127.0.0.1:8500"
+  service = "vault"
+  scheme  = "http"
 }
 EOF
 )
