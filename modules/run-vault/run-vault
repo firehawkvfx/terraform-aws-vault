@@ -319,10 +319,10 @@ EOF
 $consul_storage_type "consul" {
   address = "127.0.0.1:8500"
   path    = "vault/"
+  service = "vault"
   scheme  = "https"
   tls_cert_file   = "$tls_cert_file"
   tls_key_file    = "$tls_key_file"
-  service = "vault"
 }
 # HA settings
 cluster_addr  = "https://$instance_ip_address:$cluster_port"
@@ -331,9 +331,9 @@ api_addr      = "$api_addr"
 service_registration "consul" {
   address = "127.0.0.1:8500"
   service = "vault"
-  scheme  = "https"
-  tls_cert_file   = "$tls_cert_file"
-  tls_key_file    = "$tls_key_file"
+  scheme  = "http"
+  # tls_cert_file   = "$tls_cert_file"
+  # tls_key_file    = "$tls_key_file"
 }
 EOF
 )
