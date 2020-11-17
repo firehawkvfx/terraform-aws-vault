@@ -122,7 +122,7 @@ data "aws_iam_policy_document" "vault_iam" {
   # }
   statement {
     sid = "ManageOwnAccessKeys"
-    effect = "Allow",
+    effect = "Allow"
     actions = [
       "iam:CreateAccessKey",
       "iam:DeleteAccessKey",
