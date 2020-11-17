@@ -66,10 +66,10 @@ output "vault_cluster_size" {
   value = var.vault_cluster_size
 }
 
-output "aws_vpc" {
+output "vpc_id" {
   value = data.aws_vpc.default.id
 }
 
-output "aws_subnet_ids" {
+output "subnet_ids" {
   value = data.aws_subnet_ids.default.*.ids
 }
