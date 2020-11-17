@@ -321,9 +321,6 @@ $consul_storage_type "consul" {
   path    = "vault/"
   service = "vault"
   scheme  = "http"
-  # scheme  = "https"
-  # tls_cert_file   = "$tls_cert_file"
-  # tls_key_file    = "$tls_key_file"
 }
 # HA settings
 cluster_addr  = "https://$instance_ip_address:$cluster_port"
