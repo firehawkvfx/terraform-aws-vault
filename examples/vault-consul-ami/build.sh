@@ -10,4 +10,4 @@ export PACKER_LOG=1
 export PACKER_LOG_PATH="$SCRIPTDIR/packerlog.log"
 
 rm -f $SCRIPTDIR/manifest.json
-packer build -only amazon-ebs.ubuntu18-ami $SCRIPTDIR/vault-consul.json.pkr.hcl | ts '[%H:%M:%S]'
+packer build -only amazon-ebs.ubuntu18-ami $SCRIPTDIR/vault-consul.json.pkr.hcl | python -c 'import sys,time;sys.stdout.write("".join(( " ".join((time.strftime("[%Y-%m-%d %H:%M:%S]", time.localtime()), line)) for line in sys.stdin )))'

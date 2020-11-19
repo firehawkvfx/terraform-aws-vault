@@ -11,4 +11,4 @@ export PACKER_LOG_PATH="$SCRIPTDIR/packerlog.log"
 
 export PKR_VAR_manifest_path="$SCRIPTDIR/manifest.json"
 rm -f $PKR_VAR_manifest_path
-packer build $SCRIPTDIR/bastion.json.pkr.hcl | ts '[%H:%M:%S]'
+packer build $SCRIPTDIR/bastion.json.pkr.hcl | python -c 'import sys,time;sys.stdout.write("".join(( " ".join((time.strftime("[%Y-%m-%d %H:%M:%S]", time.localtime()), line)) for line in sys.stdin )))'
