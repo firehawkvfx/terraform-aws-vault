@@ -22,4 +22,4 @@ export PKR_VAR_nvidia_driver=$(ls /tmp/nvidia/NVIDIA-Linux-x86_64-*-grid-aws.run
 
 export PKR_VAR_manifest_path="$SCRIPTDIR/manifest.json"
 rm -f $PKR_VAR_manifest_path
-packer build $SCRIPTDIR/nice-dcv.json.pkr.hcl | python -c 'import sys,time;sys.stdout.write("".join(( " ".join((time.strftime("[%Y-%m-%d %H:%M:%S]", time.localtime()), line)) for line in sys.stdin )))'
+packer build $SCRIPTDIR/nice-dcv.json.pkr.hcl
