@@ -55,7 +55,6 @@ data "aws_ami" "vault_consul" {
 data "aws_ssm_parameter" "vault_kms_unseal" {
   name = "vault_kms_unseal_key_id"
 }
-
 data "aws_kms_key" "vault" {
   key_id = data.aws_ssm_parameter.vault_kms_unseal.value
 }
