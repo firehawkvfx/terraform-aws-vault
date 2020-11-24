@@ -97,42 +97,42 @@ module "vault_cluster" {
   ssh_key_name                         = var.ssh_key_name
 }
 
-resource "aws_iam_role_policy" "vault_iam" { # Allow authenticaion via AWS IAM
-  name   = "vault_iam"
-  role   = module.vault_cluster.iam_role_id
-  policy = data.aws_iam_policy_document.vault_iam.json
-}
+# resource "aws_iam_role_policy" "vault_iam" { # Allow authenticaion via AWS IAM
+#   name   = "vault_iam"
+#   role   = module.vault_cluster.iam_role_id
+#   policy = data.aws_iam_policy_document.vault_iam.json
+# }
 
-data "aws_iam_policy_document" "vault_iam" {
-  statement {
-    effect  = "Allow"
-    actions = [
-      "ec2:DescribeInstances",
-      "iam:GetInstanceProfile",
-      "iam:GetUser",
-      "iam:GetRole"
-    ]      
-    resources = ["*"]
-  }
-  # statement { # For cross account access. https://www.vaultproject.io/docs/auth/aws
-  #   effect    = "Allow"
-  #   actions   = ["sts:AssumeRole"]
-  #   resources = ["arn:aws:iam::<AccountId>:role/<VaultRole>"]
-  # }
-  statement {
-    sid = "ManageOwnAccessKeys"
-    effect = "Allow"
-    actions = [
-      "iam:CreateAccessKey",
-      "iam:DeleteAccessKey",
-      "iam:GetAccessKeyLastUsed",
-      "iam:GetUser",
-      "iam:ListAccessKeys",
-      "iam:UpdateAccessKey"
-    ]
-    resources = ["arn:aws:iam::*:user/$${aws:username}"]
-  }
-}
+# data "aws_iam_policy_document" "vault_iam" {
+#   statement {
+#     effect  = "Allow"
+#     actions = [
+#       "ec2:DescribeInstances",
+#       "iam:GetInstanceProfile",
+#       "iam:GetUser",
+#       "iam:GetRole"
+#     ]      
+#     resources = ["*"]
+#   }
+#   # statement { # For cross account access. https://www.vaultproject.io/docs/auth/aws
+#   #   effect    = "Allow"
+#   #   actions   = ["sts:AssumeRole"]
+#   #   resources = ["arn:aws:iam::<AccountId>:role/<VaultRole>"]
+#   # }
+#   statement {
+#     sid = "ManageOwnAccessKeys"
+#     effect = "Allow"
+#     actions = [
+#       "iam:CreateAccessKey",
+#       "iam:DeleteAccessKey",
+#       "iam:GetAccessKeyLastUsed",
+#       "iam:GetUser",
+#       "iam:ListAccessKeys",
+#       "iam:UpdateAccessKey"
+#     ]
+#     resources = ["arn:aws:iam::*:user/$${aws:username}"]
+#   }
+# }
 
 # ---------------------------------------------------------------------------------------------------------------------
 # ATTACH IAM POLICIES FOR CONSUL

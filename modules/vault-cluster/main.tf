@@ -244,14 +244,41 @@ resource "aws_iam_role" "instance_role" {
 }
 
 data "aws_iam_policy_document" "instance_role" {
-  statement {
+  statement { # This is the minimum policy required for vault to operate with AWS.
     effect  = "Allow"
     actions = ["sts:AssumeRole"]
-
     principals {
       type        = "Service"
       identifiers = ["ec2.amazonaws.com"]
     }
+  }
+  statement { # These statements and those below enable vault to provide acces to instance via their profiles
+    effect  = "Allow"
+    actions = [
+      "ec2:DescribeInstances", # This may be disabled if not using the ec2 auth method
+      "iam:GetInstanceProfile", # This may be disabled if not using the ec2 auth method
+      "iam:GetUser",
+      "iam:GetRole"
+    ]      
+    resources = ["*"]
+  }
+  # statement { # For cross account access. https://www.vaultproject.io/docs/auth/aws
+  #   effect    = "Allow"
+  #   actions   = ["sts:AssumeRole"]
+  #   resources = ["arn:aws:iam::<AccountId>:role/<VaultRole>"]
+  # }
+  statement {
+    sid = "ManageOwnAccessKeys"
+    effect = "Allow"
+    actions = [
+      "iam:CreateAccessKey",
+      "iam:DeleteAccessKey",
+      "iam:GetAccessKeyLastUsed",
+      "iam:GetUser",
+      "iam:ListAccessKeys",
+      "iam:UpdateAccessKey"
+    ]
+    resources = ["arn:aws:iam::*:user/$${aws:username}"]
   }
 }
 
