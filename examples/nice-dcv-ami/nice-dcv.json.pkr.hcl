@@ -116,7 +116,7 @@ build {
   }
   # provisioner "file" { # vault and consul servers only: clients may not need the private and public keys.
   #   destination = "/tmp/vault.crt.pem"
-  #   source      = "${var.tls_public_key_path}"
+  #   source      = "${var.tls_public_key_path}" # servers only
   # }
   # provisioner "file" { # vault and consul servers only: clients may not need the private and public keys.
   #   destination = "/tmp/vault.key.pem"
