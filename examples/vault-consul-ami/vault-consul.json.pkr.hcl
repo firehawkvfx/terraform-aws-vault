@@ -84,24 +84,24 @@ source "amazon-ebs" "amazon-linux-2-ami" {
   ssh_username = "ec2-user"
 }
 
-# source "amazon-ebs" "ubuntu16-ami" {
-#   ami_description = "An Ubuntu 16.04 AMI that has Vault ${var.vault_version} and Consul ${var.consul_version} installed."
-#   ami_name        = "vault-consul-ubuntu16-${local.timestamp}-{{uuid}}"
-#   instance_type   = "t2.micro"
-#   region          = "${var.aws_region}"
-#   source_ami_filter {
-#     filters = {
-#       architecture                       = "x86_64"
-#       "block-device-mapping.volume-type" = "gp2"
-#       name                               = "ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-*"
-#       root-device-type                   = "ebs"
-#       virtualization-type                = "hvm"
-#     }
-#     most_recent = true
-#     owners      = ["099720109477"]
-#   }
-#   ssh_username = "ubuntu"
-# }
+source "amazon-ebs" "ubuntu16-ami" {
+  ami_description = "An Ubuntu 16.04 AMI that has Vault ${var.vault_version} and Consul ${var.consul_version} installed."
+  ami_name        = "vault-consul-ubuntu16-${local.timestamp}-{{uuid}}"
+  instance_type   = "t2.micro"
+  region          = "${var.aws_region}"
+  source_ami_filter {
+    filters = {
+      architecture                       = "x86_64"
+      "block-device-mapping.volume-type" = "gp2"
+      name                               = "ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-*"
+      root-device-type                   = "ebs"
+      virtualization-type                = "hvm"
+    }
+    most_recent = true
+    owners      = ["099720109477"]
+  }
+  ssh_username = "ubuntu"
+}
 
 source "amazon-ebs" "ubuntu18-ami" {
   ami_description = "An Ubuntu 18.04 AMI that has Vault ${var.vault_version} and Consul ${var.consul_version} installed."
