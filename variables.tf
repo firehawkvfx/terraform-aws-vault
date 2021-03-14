@@ -12,6 +12,11 @@
 # These parameters have reasonable defaults.
 # ---------------------------------------------------------------------------------------------------------------------
 
+variable "resourcetier" {
+    description = "The resource tier speicifies a unique name for a resource based on the environment.  eg:  dev, green, blue, main."
+    type = string
+}
+
 variable "create_dns_entry" {
   description = "If set to true, this module will create a Route 53 DNS A record for the ELB in the var.hosted_zone_id hosted zone with the domain name in var.vault_domain_name."
   type        = bool
