@@ -7,10 +7,12 @@
 
 # ----------------------------------------------------------------------------------------------------------------------
 # REQUIRE A SPECIFIC TERRAFORM VERSION OR HIGHER
-# This module has been updated with 0.12 syntax, which means it is no longer compatible with any versions below 0.12.
 # ----------------------------------------------------------------------------------------------------------------------
 terraform {
-  required_version = ">= 0.12"
+  # This module is now only being tested with Terraform 0.13.x. However, to make upgrading easier, we are setting
+  # 0.12.26 as the minimum version, as that version added support for required_providers with source URLs, making it
+  # forwards compatible with 0.13.x code.
+  required_version = ">= 0.12.26"
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -97,43 +99,6 @@ module "vault_cluster" {
   ssh_key_name                         = var.ssh_key_name
 }
 
-resource "aws_iam_role_policy" "vault_iam" { # Allow authenticaion via AWS IAM
-  name   = "vault_iam"
-  role   = module.vault_cluster.iam_role_id
-  policy = data.aws_iam_policy_document.vault_iam.json
-}
-
-data "aws_iam_policy_document" "vault_iam" {
-  statement {
-    effect  = "Allow"
-    actions = [
-      "ec2:DescribeInstances",
-      "iam:GetInstanceProfile",
-      "iam:GetUser",
-      "iam:GetRole"
-    ]      
-    resources = ["*"]
-  }
-  # statement { # For cross account access. https://www.vaultproject.io/docs/auth/aws
-  #   effect    = "Allow"
-  #   actions   = ["sts:AssumeRole"]
-  #   resources = ["arn:aws:iam::<AccountId>:role/<VaultRole>"]
-  # }
-  statement {
-    sid = "ManageOwnAccessKeys"
-    effect = "Allow"
-    actions = [
-      "iam:CreateAccessKey",
-      "iam:DeleteAccessKey",
-      "iam:GetAccessKeyLastUsed",
-      "iam:GetUser",
-      "iam:ListAccessKeys",
-      "iam:UpdateAccessKey"
-    ]
-    resources = ["arn:aws:iam::*:user/$${aws:username}"]
-  }
-}
-
 # ---------------------------------------------------------------------------------------------------------------------
 # ATTACH IAM POLICIES FOR CONSUL
 # To allow our Vault servers to automatically discover the Consul servers, we need to give them the IAM permissions from
@@ -141,7 +106,7 @@ data "aws_iam_policy_document" "vault_iam" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 module "consul_iam_policies_servers" {
-  source = "github.com/hashicorp/terraform-aws-consul.git//modules/consul-iam-policies?ref=v0.7.7"
+  source = "github.com/hashicorp/terraform-aws-consul.git//modules/consul-iam-policies?ref=v0.8.0"
 
   iam_role_id = module.vault_cluster.iam_role_id
 }
@@ -150,27 +115,6 @@ module "consul_iam_policies_servers" {
 # THE USER DATA SCRIPT THAT WILL RUN ON EACH VAULT SERVER WHEN IT'S BOOTING
 # This script will configure and start Vault
 # ---------------------------------------------------------------------------------------------------------------------
-
-# data "template_file" "user_data_vault_cluster" {
-#   template = file("${path.module}/examples/root-example/user-data-vault.sh")
-
-#   vars = {
-#     aws_region               = data.aws_region.current.name
-#     consul_cluster_tag_key   = var.consul_cluster_tag_key
-#     consul_cluster_tag_value = var.consul_cluster_name
-#   }
-# }
-
-# data "template_file" "user_data_vault_cluster" {
-#   template = file("${path.module}/examples/vault-auto-unseal/user-data-vault.sh")
-
-#   vars = {
-#     consul_cluster_tag_key   = var.consul_cluster_tag_key
-#     consul_cluster_tag_value = var.consul_cluster_name
-#     kms_key_id               = aws_kms_key.vault.id
-#     aws_region               = data.aws_region.current.name
-#   }
-# }
 
 data "template_file" "user_data_vault_cluster" {
   template = var.enable_auto_unseal ? file("${path.module}/examples/vault-auto-unseal/user-data-vault.sh") : file("${path.module}/examples/root-example/user-data-vault.sh")
@@ -188,8 +132,6 @@ data "template_file" "user_data_vault_cluster" {
   }
 }
 
-
-
 # ---------------------------------------------------------------------------------------------------------------------
 # PERMIT CONSUL SPECIFIC TRAFFIC IN VAULT CLUSTER
 # To allow our Vault servers consul agents to communicate with other consul agents and participate in the LAN gossip,
@@ -197,7 +139,7 @@ data "template_file" "user_data_vault_cluster" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 module "security_group_rules" {
-  source = "github.com/hashicorp/terraform-aws-consul.git//modules/consul-client-security-group-rules?ref=v0.7.7"
+  source = "github.com/hashicorp/terraform-aws-consul.git//modules/consul-client-security-group-rules?ref=v0.8.0"
 
   security_group_id = module.vault_cluster.security_group_id
 
@@ -207,50 +149,13 @@ module "security_group_rules" {
   allowed_inbound_cidr_blocks = ["0.0.0.0/0"]
 }
 
-# ---------------------------------------------------------------------------------------------------------------------
-# DEPLOY THE ELB
-# ---------------------------------------------------------------------------------------------------------------------
-
-# module "vault_elb" {
-#   # When using these modules in your own templates, you will need to use a Git URL with a ref attribute that pins you
-#   # to a specific version of the modules, such as the following example:
-#   # source = "github.com/hashicorp/terraform-aws-vault//modules/vault-elb?ref=v0.0.1"
-#   source = "./modules/vault-elb"
-
-#   name = var.vault_cluster_name
-
-#   vpc_id     = data.aws_vpc.default.id
-#   subnet_ids = data.aws_subnet_ids.default.ids
-
-#   # Associate the ELB with the instances created by the Vault Autoscaling group
-#   vault_asg_name = module.vault_cluster.asg_name
-
-#   # To make testing easier, we allow requests from any IP address here but in a production deployment, we *strongly*
-#   # recommend you limit this to the IP address ranges of known, trusted servers inside your VPC.
-#   allowed_inbound_cidr_blocks = ["0.0.0.0/0"]
-
-#   # In order to access Vault over HTTPS, we need a domain name that matches the TLS cert
-#   create_dns_entry = var.create_dns_entry
-
-#   # Terraform conditionals are not short-circuiting, so we use join as a workaround to avoid errors when the
-#   # aws_route53_zone data source isn't actually set: https://github.com/hashicorp/hil/issues/50
-#   hosted_zone_id = var.create_dns_entry ? join("", data.aws_route53_zone.selected.*.zone_id) : ""
-
-#   domain_name = var.vault_domain_name
-# }
-
-# # Look up the Route 53 Hosted Zone by domain name
-# data "aws_route53_zone" "selected" {
-#   count = var.create_dns_entry ? 1 : 0
-#   name  = "${var.hosted_zone_domain_name}."
-# }
 
 # ---------------------------------------------------------------------------------------------------------------------
 # DEPLOY THE CONSUL SERVER CLUSTER
 # ---------------------------------------------------------------------------------------------------------------------
 
 module "consul_cluster" {
-  source = "github.com/hashicorp/terraform-aws-consul.git//modules/consul-cluster?ref=v0.7.7"
+  source = "github.com/hashicorp/terraform-aws-consul.git//modules/consul-cluster?ref=v0.8.0"
 
   cluster_name  = var.consul_cluster_name
   cluster_size  = var.consul_cluster_size
@@ -269,7 +174,7 @@ module "consul_cluster" {
   # To make testing easier, we allow Consul and SSH requests from any IP address here but in a production
   # deployment, we strongly recommend you limit this to the IP address ranges of known, trusted servers inside your VPC.
 
-  allowed_ssh_cidr_blocks     = ["0.0.0.0/0"] # TODO limit these IP ranges
+  allowed_ssh_cidr_blocks     = ["0.0.0.0/0"]
   allowed_inbound_cidr_blocks = ["0.0.0.0/0"]
   ssh_key_name                = var.ssh_key_name
 }
