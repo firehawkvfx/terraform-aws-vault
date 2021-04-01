@@ -65,6 +65,11 @@ variable "s3_bucket_name" {
   default     = null
 }
 
+variable "use_existing_s3_bucket" {
+  description = "If true, use an existing S3 bucket (provided by s3_bucket_name) instead of creating the bucket within this module."
+  default     = false
+}
+
 variable "subnet_tags" {
   description = "Tags used to find subnets for vault and consul servers"
   type        = map(string)

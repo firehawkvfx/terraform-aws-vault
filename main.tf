@@ -87,8 +87,9 @@ module "vault_cluster" {
   enable_auto_unseal      = var.enable_auto_unseal
   auto_unseal_kms_key_arn = var.enable_auto_unseal ? data.aws_kms_key.vault.arn : ""
 
-  enable_s3_backend = var.enable_s3_backend
-  s3_bucket_name    = var.s3_bucket_name
+  enable_s3_backend      = var.enable_s3_backend
+  s3_bucket_name         = var.s3_bucket_name
+  use_existing_s3_bucket = var.use_existing_s3_bucket
 
   # To make testing easier, we allow requests from any IP address here but in a production deployment, we *strongly*
   # recommend you limit this to the IP address ranges of known, trusted servers inside your VPC.
