@@ -65,7 +65,8 @@ module "vault_cluster" {
   # When using these modules in your own templates, you will need to use a Git URL with a ref attribute that pins you
   # to a specific version of the modules, such as the following example:
   # source = "github.com/hashicorp/terraform-aws-vault//modules/vault-cluster?ref=v0.0.1"
-  source = "./modules/vault-cluster"
+  source = "github.com/queglay/terraform-aws-vault.git//modules/vault-cluster?ref=dev"
+  # source = "./modules/vault-cluster"
 
   cluster_name  = var.vault_cluster_name
   cluster_size  = var.vault_cluster_size
@@ -83,11 +84,11 @@ module "vault_cluster" {
 
   # This setting will create the AWS policy that allows the vault cluster to
   # access KMS and use this key for encryption and decryption
-  enable_auto_unseal = var.enable_auto_unseal
+  enable_auto_unseal      = var.enable_auto_unseal
   auto_unseal_kms_key_arn = var.enable_auto_unseal ? data.aws_kms_key.vault.arn : ""
 
   enable_s3_backend = var.enable_s3_backend
-  s3_bucket_name = var.s3_bucket_name
+  s3_bucket_name    = var.s3_bucket_name
 
   # To make testing easier, we allow requests from any IP address here but in a production deployment, we *strongly*
   # recommend you limit this to the IP address ranges of known, trusted servers inside your VPC.
@@ -125,7 +126,7 @@ data "template_file" "user_data_vault_cluster" {
     kms_key_id               = data.aws_kms_key.vault.id
     aws_region               = data.aws_region.current.name
     s3_bucket_name           = var.s3_bucket_name
-  } : {
+    } : {
     aws_region               = data.aws_region.current.name
     consul_cluster_tag_key   = var.consul_cluster_tag_key
     consul_cluster_tag_value = var.consul_cluster_name
