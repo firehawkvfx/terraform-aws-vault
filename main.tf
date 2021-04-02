@@ -71,7 +71,11 @@ module "vault_cluster" {
   cluster_name       = var.vault_cluster_name
   cluster_size       = var.vault_cluster_size
   instance_type      = var.vault_instance_type
-  cluster_extra_tags = var.common_tags
+  cluster_extra_tags = [for key_name in var.common_tags: {
+      key   = key_name
+      value = var.common_tags[key_name]
+      propogate_at_launch = true
+    }]
 
   ami_id    = var.ami_id == null ? data.aws_ami.vault_consul.image_id : var.ami_id
   user_data = data.template_file.user_data_vault_cluster.rendered
