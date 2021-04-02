@@ -121,12 +121,9 @@ module "vault_cluster" {
   ssh_key_name                         = var.ssh_key_name
 }
 
+# restore missing iam permissions
 
-# ---------------------------------------------------------------------------------------------------------------------
-# ADDS A POLICY TO THE VAULT CLUSTER ROLE SO VAULT CAN QUERY AWS IAM USERS AND ROLES
-# ---------------------------------------------------------------------------------------------------------------------
-
-resource "aws_iam_role_policy" "vault_iam" {
+resource "aws_iam_role_policy" "vault_iam" { # Allow authenticaion via AWS IAM
   name   = "vault_iam"
   role   = module.vault_cluster.iam_role_id
   policy = data.aws_iam_policy_document.vault_iam.json
@@ -135,22 +132,63 @@ resource "aws_iam_role_policy" "vault_iam" {
 data "aws_iam_policy_document" "vault_iam" {
   statement {
     effect  = "Allow"
-    actions = ["iam:GetRole", "iam:GetUser"]
-
-    # List of arns it can query, for more security, it could be set to specific roles or user
-    # resources = ["${aws_iam_role.example_instance_role.arn}"]
-    resources = [
-      "arn:aws:iam::*:user/*",
-      "arn:aws:iam::*:role/*",
-    ]
-  }
-
-  statement {
-    effect    = "Allow"
-    actions   = ["sts:GetCallerIdentity"]
+    actions = [
+      "ec2:DescribeInstances",
+      "iam:GetInstanceProfile",
+      "iam:GetUser",
+      "iam:GetRole"
+    ]      
     resources = ["*"]
   }
+  # statement { # For cross account access. https://www.vaultproject.io/docs/auth/aws
+  #   effect    = "Allow"
+  #   actions   = ["sts:AssumeRole"]
+  #   resources = ["arn:aws:iam::<AccountId>:role/<VaultRole>"]
+  # }
+  statement {
+    sid = "ManageOwnAccessKeys"
+    effect = "Allow"
+    actions = [
+      "iam:CreateAccessKey",
+      "iam:DeleteAccessKey",
+      "iam:GetAccessKeyLastUsed",
+      "iam:GetUser",
+      "iam:ListAccessKeys",
+      "iam:UpdateAccessKey"
+    ]
+    resources = ["arn:aws:iam::*:user/$${aws:username}"]
+  }
 }
+
+# # ---------------------------------------------------------------------------------------------------------------------
+# # ADDS A POLICY TO THE VAULT CLUSTER ROLE SO VAULT CAN QUERY AWS IAM USERS AND ROLES
+# # ---------------------------------------------------------------------------------------------------------------------
+
+# resource "aws_iam_role_policy" "vault_iam" {
+#   name   = "vault_iam"
+#   role   = module.vault_cluster.iam_role_id
+#   policy = data.aws_iam_policy_document.vault_iam.json
+# }
+
+# data "aws_iam_policy_document" "vault_iam" {
+#   statement {
+#     effect  = "Allow"
+#     actions = ["iam:GetRole", "iam:GetUser"]
+
+#     # List of arns it can query, for more security, it could be set to specific roles or user
+#     # resources = ["${aws_iam_role.example_instance_role.arn}"]
+#     resources = [
+#       "arn:aws:iam::*:user/*",
+#       "arn:aws:iam::*:role/*",
+#     ]
+#   }
+
+#   statement {
+#     effect    = "Allow"
+#     actions   = ["sts:GetCallerIdentity"]
+#     resources = ["*"]
+#   }
+# }
 
 # ---------------------------------------------------------------------------------------------------------------------
 # ATTACH IAM POLICIES FOR CONSUL
