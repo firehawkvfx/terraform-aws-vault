@@ -121,6 +121,37 @@ module "vault_cluster" {
   ssh_key_name                         = var.ssh_key_name
 }
 
+
+# ---------------------------------------------------------------------------------------------------------------------
+# ADDS A POLICY TO THE VAULT CLUSTER ROLE SO VAULT CAN QUERY AWS IAM USERS AND ROLES
+# ---------------------------------------------------------------------------------------------------------------------
+
+resource "aws_iam_role_policy" "vault_iam" {
+  name   = "vault_iam"
+  role   = module.vault_cluster.iam_role_id
+  policy = data.aws_iam_policy_document.vault_iam.json
+}
+
+data "aws_iam_policy_document" "vault_iam" {
+  statement {
+    effect  = "Allow"
+    actions = ["iam:GetRole", "iam:GetUser"]
+
+    # List of arns it can query, for more security, it could be set to specific roles or user
+    # resources = ["${aws_iam_role.example_instance_role.arn}"]
+    resources = [
+      "arn:aws:iam::*:user/*",
+      "arn:aws:iam::*:role/*",
+    ]
+  }
+
+  statement {
+    effect    = "Allow"
+    actions   = ["sts:GetCallerIdentity"]
+    resources = ["*"]
+  }
+}
+
 # ---------------------------------------------------------------------------------------------------------------------
 # ATTACH IAM POLICIES FOR CONSUL
 # To allow our Vault servers to automatically discover the Consul servers, we need to give them the IAM permissions from
