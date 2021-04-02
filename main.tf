@@ -71,9 +71,9 @@ module "vault_cluster" {
   cluster_name       = var.vault_cluster_name
   cluster_size       = var.vault_cluster_size
   instance_type      = var.vault_instance_type
-  cluster_extra_tags = [for key_name in var.common_tags: {
-      key   = key_name
-      value = var.common_tags[key_name]
+  cluster_extra_tags = [for tag_name, tag_value in var.common_tags: {
+      key   = tag_name
+      value = tag_value
       propogate_at_launch = true
     }]
 
