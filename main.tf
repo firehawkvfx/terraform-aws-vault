@@ -79,7 +79,7 @@ module "vault_cluster" {
   cluster_name       = var.vault_cluster_name
   cluster_size       = var.vault_cluster_size
   instance_type      = var.vault_instance_type
-  cluster_extra_tags = local.cluster_extra_tags
+  # cluster_extra_tags = local.cluster_extra_tags
 
   # cluster_extra_tags = flatten([
   #   for network_key, network in var.networks : [
