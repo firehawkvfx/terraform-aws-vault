@@ -73,3 +73,7 @@ output "vpc_id" {
 output "subnet_ids" {
   value = data.aws_subnet_ids.default.*.ids
 }
+
+output "cluster_extra_tags" {
+  value = local.cluster_extra_tags
+}

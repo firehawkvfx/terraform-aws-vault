@@ -61,6 +61,14 @@ data "aws_kms_key" "vault" {
   key_id = data.aws_ssm_parameter.vault_kms_unseal.value
 }
 
+locals {
+  cluster_extra_tags = [for tag_key, tag_value in var.common_tags: {
+    key   = tag_key
+    value = tag_value
+    propogate_at_launch = true
+  }]
+}
+
 module "vault_cluster" {
   # When using these modules in your own templates, you will need to use a Git URL with a ref attribute that pins you
   # to a specific version of the modules, such as the following example:
@@ -71,11 +79,18 @@ module "vault_cluster" {
   cluster_name       = var.vault_cluster_name
   cluster_size       = var.vault_cluster_size
   instance_type      = var.vault_instance_type
-  cluster_extra_tags = [for tag_name, tag_value in var.common_tags: {
-      key   = tag_name
-      value = tag_value
-      propogate_at_launch = true
-    }]
+  cluster_extra_tags = local.cluster_extra_tags
+
+  # cluster_extra_tags = flatten([
+  #   for network_key, network in var.networks : [
+  #     for tag_key, tag_value in network.subnets : {
+  #       network_key = network_key
+  #       subnet_key  = subnet_key
+  #       network_id  = aws_vpc.example[network_key].id
+  #       cidr_block  = subnet.cidr_block
+  #     }
+  #   ]
+  # ])
 
   ami_id    = var.ami_id == null ? data.aws_ami.vault_consul.image_id : var.ami_id
   user_data = data.template_file.user_data_vault_cluster.rendered
