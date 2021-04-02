@@ -130,3 +130,7 @@ variable "consul_cluster_tag_key" {
   default     = "consul-servers"
 }
 
+variable "common_tags" {
+  description = "Common tags for all resources in a deployment run."
+  type        = map(string)
+}

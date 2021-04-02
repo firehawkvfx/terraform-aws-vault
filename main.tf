@@ -68,9 +68,10 @@ module "vault_cluster" {
   source = "github.com/queglay/terraform-aws-vault.git//modules/vault-cluster?ref=dev"
   # source = "./modules/vault-cluster"
 
-  cluster_name  = var.vault_cluster_name
-  cluster_size  = var.vault_cluster_size
-  instance_type = var.vault_instance_type
+  cluster_name       = var.vault_cluster_name
+  cluster_size       = var.vault_cluster_size
+  instance_type      = var.vault_instance_type
+  cluster_extra_tags = var.common_tags
 
   ami_id    = var.ami_id == null ? data.aws_ami.vault_consul.image_id : var.ami_id
   user_data = data.template_file.user_data_vault_cluster.rendered
