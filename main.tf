@@ -65,7 +65,7 @@ locals {
   cluster_extra_tags = [for tag_key, tag_value in var.common_tags : {
     key                 = tag_key
     value               = tag_value
-    propogate_at_launch = true
+    propagate_at_launch = true
   }]
 }
 
