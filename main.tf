@@ -62,9 +62,9 @@ data "aws_kms_key" "vault" {
 }
 
 locals {
-  cluster_extra_tags = [for tag_key, tag_value in var.common_tags: {
-    key   = tag_key
-    value = tag_value
+  cluster_extra_tags = [for tag_key, tag_value in var.common_tags : {
+    key                 = tag_key
+    value               = tag_value
     propogate_at_launch = true
   }]
 }
@@ -76,9 +76,9 @@ module "vault_cluster" {
   source = "github.com/queglay/terraform-aws-vault.git//modules/vault-cluster?ref=dev"
   # source = "./modules/vault-cluster"
 
-  cluster_name       = var.vault_cluster_name
-  cluster_size       = var.vault_cluster_size
-  instance_type      = var.vault_instance_type
+  cluster_name  = var.vault_cluster_name
+  cluster_size  = var.vault_cluster_size
+  instance_type = var.vault_instance_type
   # cluster_extra_tags = local.cluster_extra_tags
 
   # cluster_extra_tags = flatten([
