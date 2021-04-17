@@ -72,9 +72,9 @@ locals {
 module "vault_cluster" {
   # When using these modules in your own templates, you will need to use a Git URL with a ref attribute that pins you
   # to a specific version of the modules, such as the following example:
-  # source = "github.com/hashicorp/terraform-aws-vault//modules/vault-cluster?ref=v0.0.1"
-  source = "github.com/queglay/terraform-aws-vault.git//modules/vault-cluster?ref=dev"
-  # source = "./modules/vault-cluster"
+
+  # Temproarily using a fork until PR's are accepted by hashicorp
+  source = "github.com/queglay/terraform-aws-vault.git//modules/vault-cluster?ref=firehawk_v0.0.1"
 
   cluster_name  = var.vault_cluster_name
   cluster_size  = var.vault_cluster_size
