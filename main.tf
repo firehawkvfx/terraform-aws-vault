@@ -167,7 +167,7 @@ resource "aws_iam_role_policy" "vault_iam_generate_creds" { # Allow authenticaio
   role   = module.vault_cluster.iam_role_id
   policy = data.aws_iam_policy_document.vault_iam_generate_creds.json
 }
-
+data "aws_caller_identity" "current" {}
 data "aws_iam_policy_document" "vault_iam_generate_creds" {
   statement {
     effect  = "Allow"
@@ -187,7 +187,7 @@ data "aws_iam_policy_document" "vault_iam_generate_creds" {
       "iam:AddUserToGroup",
       "iam:RemoveUserFromGroup"
     ]      
-    resources = ["arn:aws:iam::$${aws:accountid}:user/vault-*"]
+    resources = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/vault-*"]
   }
 }
 
