@@ -30,3 +30,4 @@ vendor
 
 # plan files are temporary
 **/tfplan
+.terraform.lock.hcl
