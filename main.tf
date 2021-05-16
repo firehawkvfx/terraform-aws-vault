@@ -121,9 +121,9 @@ module "vault_cluster" {
   ssh_key_name                         = var.ssh_key_name
 }
 
-# restore missing iam permissions
+ # Allow authenticaion via AWS IAM
 
-resource "aws_iam_role_policy" "vault_iam" { # Allow authenticaion via AWS IAM
+resource "aws_iam_role_policy" "vault_iam" {
   name   = "vault_iam"
   role   = module.vault_cluster.iam_role_id
   policy = data.aws_iam_policy_document.vault_iam.json
@@ -157,6 +157,37 @@ data "aws_iam_policy_document" "vault_iam" {
       "iam:UpdateAccessKey"
     ]
     resources = ["arn:aws:iam::*:user/$${aws:username}"]
+  }
+}
+
+# Allow Vault to create IAM credentials
+
+resource "aws_iam_role_policy" "vault_iam_generate_creds" { # Allow authenticaion via AWS IAM
+  name   = "vault_iam_generate_creds"
+  role   = module.vault_cluster.iam_role_id
+  policy = data.aws_iam_policy_document.vault_iam_generate_creds.json
+}
+
+data "aws_iam_policy_document" "vault_iam_generate_creds" {
+  statement {
+    effect  = "Allow"
+    actions = [
+      "iam:AttachUserPolicy",
+      "iam:CreateAccessKey",
+      "iam:CreateUser",
+      "iam:DeleteAccessKey",
+      "iam:DeleteUser",
+      "iam:DeleteUserPolicy",
+      "iam:DetachUserPolicy",
+      "iam:ListAccessKeys",
+      "iam:ListAttachedUserPolicies",
+      "iam:ListGroupsForUser",
+      "iam:ListUserPolicies",
+      "iam:PutUserPolicy",
+      "iam:AddUserToGroup",
+      "iam:RemoveUserFromGroup"
+    ]      
+    resources = ["arn:aws:iam::$${aws:accountid}:user/vault-*"]
   }
 }
 
